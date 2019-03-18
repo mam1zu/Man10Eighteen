@@ -14,8 +14,39 @@ public class EighteenEventManager implements Listener {
     }
     @EventHandler
     public void onInventoryClickEvent(InventoryClickEvent e) {
+        if(e.getClickedInventory() == null) {
+            return;
+        }
+        if(e.getClickedInventory().equals(e.getWhoClicked().getInventory())) {
+            return;
+        }
         Player p = (Player)e.getWhoClicked();
+        if(EighteenStatus.onMenu.contains(p.getUniqueId())) {
+            e.setCancelled(true);
+            if(e.getSlot() == 0) {
+                //TODO: /eighteen gameのhelpを見せる
+                p.closeInventory();
+                EighteenStatus.onMenu.remove(p.getUniqueId());
+                return;
+            }
+            if(e.getSlot() == 1) {
+                p.closeInventory();
+                EighteenStatus.onMenu.remove(p.getUniqueId());
+                p.chat("/eighteen help");
+                return;
+            }
+            if(e.getSlot() == 2) {
+                p.closeInventory();
+                EighteenStatus.onMenu.remove(p.getUniqueId());
+                p.chat("/eighteen help");
+            }
+        }
+        if(EighteenStatus.onGame.contains(p.getUniqueId())) {
 
+            e.setCancelled(true);
+            if(e.getSlot() == 3) {
+            }
+        }
     }
 
     @EventHandler

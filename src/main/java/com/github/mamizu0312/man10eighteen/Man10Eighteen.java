@@ -9,7 +9,7 @@ public final class Man10Eighteen extends JavaPlugin {
     static HashMap<UUID, String> playerstatus = new HashMap<>();
     @Override
     public void onEnable() {
-        getCommand("man10eighteen").setExecutor(new CommandManager());
+        getCommand("man10eighteen").setExecutor(new EighteenCommandManager());
         new EighteenEventManager(this);
     }
 

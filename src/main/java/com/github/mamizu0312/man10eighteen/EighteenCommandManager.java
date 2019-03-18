@@ -15,7 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-public class CommandManager implements CommandExecutor {
+public class EighteenCommandManager implements CommandExecutor {
     String prefix = "§7[§aeighteen§7]§r";
     EighteenBattleManager ebm = null;
     public boolean onCommand(CommandSender sender, Command command ,String label, String[] args) {
@@ -41,7 +41,7 @@ public class CommandManager implements CommandExecutor {
             ItemMeta itemm2 = item2.getItemMeta();
             itemm2.setDisplayName("COMとプレイを開始します。難易度設定不可");
             List<String> lore2 = new ArrayList<>();
-            lore2.add("���ݏ�����...");
+            lore.add("現在準備中");
             itemm2.setLore(lore2);
             inv.setItem(1, item2);
 
@@ -72,10 +72,14 @@ public class CommandManager implements CommandExecutor {
                     for(UUID key : onwaitplayeruuid) {
                         if(EighteenStatus.onWait.get(key).equals(p.getUniqueId())) {
                             //TODO:ゲームが始まるコード
+                            Player p2 = Bukkit.getServer().getPlayer(key);
+                            EighteenStatus.onGame.add(p.getUniqueId());
+                            EighteenStatus.onGame.add(p2.getUniqueId());
+
                         }
                     }
                 } else {
-                    p.sendMessage(prefix + "§cあなたに招待は来ていません。");
+                    p.sendMessage(prefix + "§c招待は、何一つ、ありませんでした...");
                     return true;
                 }
             }
