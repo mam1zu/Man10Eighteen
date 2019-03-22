@@ -161,6 +161,17 @@ public class EighteenBattleManager {
         }
         return -1;
     }
+
+    //Mr_IK: added setter
+    
+    public void setP1(Player p){
+        p1 = p;
+    }
+
+    public void setP2(Player p){
+        p2 = p;
+    }
+
     public boolean isPlayerP1(Player p) {
         return p1 == p;
     }
