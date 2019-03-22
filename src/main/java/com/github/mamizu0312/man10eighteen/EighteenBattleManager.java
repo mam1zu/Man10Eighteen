@@ -81,6 +81,72 @@ public class EighteenBattleManager {
         p2.openInventory(plugin.p2inv);
         return;
     }
+    void endgame() {
+
+    }
+    void judge() {
+        int result = rpsjudge();
+        if(result == 0) {
+            plugin.round++;
+        }
+        if(result == 1) {
+            switch(plugin.round) {
+                case 6:
+                    plugin.p1score += 2;
+                    plugin.round++;
+                    break;
+                case 10:
+                    plugin.p1score += 2;
+                    //TODO:ゲーム終了、スコアを計算して勝敗判定させる
+                    endgame();
+                default:
+                    break;
+            }
+        }
+        if(result == 2) {
+            switch(plugin.round) {
+                case 6:
+                    plugin.p2score += 2;
+                    plugin.round++;
+                    break;
+                case 10:
+                    plugin.p2score += 2;
+                    //TODO:ゲーム終了、スコアを計算して勝敗判定させる
+                default:
+                    break;
+            }
+        }
+        p1.updateInventory();
+        p2.updateInventory();
+    }
+
+    int rpsjudge() {
+        ////////////////////////////
+        ///あいこ0、p1勝利1、p2勝利2//
+        ///////////////////////////
+        if(plugin.p1putoutfinger == plugin.p2putoutfinger) {
+            return 0;
+        }
+        if(plugin.p1putoutfinger == plugin.rockfinger && plugin.p2putoutfinger == plugin.scissorfinger) {
+            return 1;
+        }
+        if(plugin.p1putoutfinger == plugin.rockfinger && plugin.p2putoutfinger == plugin.paperfinger) {
+            return 2;
+        }
+        if(plugin.p1putoutfinger == plugin.scissorfinger && plugin.p2putoutfinger == plugin.rockfinger) {
+            return 2;
+        }
+        if(plugin.p1putoutfinger == plugin.scissorfinger && plugin.p2putoutfinger == plugin.paperfinger) {
+            return 1;
+        }
+        if(plugin.p1putoutfinger == plugin.paperfinger && plugin.p2putoutfinger == plugin.rockfinger) {
+            return 1;
+        }
+        if(plugin.p1putoutfinger == plugin.paperfinger && plugin.p2putoutfinger == plugin.scissorfinger) {
+            return 2;
+        }
+        return -1;
+    }
     public boolean isPlayerP1(Player p) {
         return p1 == p;
     }
