@@ -82,7 +82,21 @@ public class EighteenBattleManager {
         return;
     }
     void endgame() {
-
+        p1.closeInventory();
+        p2.closeInventory();
+        plugin.p1score -= plugin.p1finger;
+        plugin.p2score -= plugin.p2finger;
+        if(plugin.p1score == plugin.p2score) {
+            p1.sendMessage(plugin.prefix+"§eあなたは§l"+p2.getName()+"§r§eと勝負しましたが、引き分けでした。");
+            p2.sendMessage(plugin.prefix+"§eあなたは§l"+p1.getName()+"§r§eと勝負しましたが、引き分けでした。");
+        }
+        if(plugin.p1score > plugin.p2score) {
+            p1.sendMessage(plugin.prefix+"§eあなたは§l"+p2.getName()+"§r§eに勝利しました！");
+            p2.sendMessage(plugin.prefix+"§eあなたは§l"+p1.getName()+"§r§eに敗北しました...");
+        } else {
+            p1.sendMessage(plugin.prefix+"§eあなたは§l"+p2.getName()+"§r§eに敗北しました...");
+            p2.sendMessage(plugin.prefix+"§eあなたは§l"+p1.getName()+"§r§eに勝利しました！");
+        }
     }
     void judge() {
         int result = rpsjudge();

@@ -103,9 +103,7 @@ public class EighteenEventManager implements Listener {
                     }
                     if(!plugin.p1canchooserps && !plugin.p2canchooserps) {
                         //TODO: 両方とも出し終わった判定なのでジャッジして次のラウンドへ
-
                     }
-                    return;
                 }
             }
         }
