@@ -163,7 +163,8 @@ public class EighteenBattleManager {
     }
 
     //Mr_IK: added setter
-    
+    //test push
+
     public void setP1(Player p){
         p1 = p;
     }
