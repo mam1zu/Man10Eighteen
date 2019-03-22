@@ -11,6 +11,7 @@ public class EighteenEventManager implements Listener {
     EighteenBattleManager battle;
     public EighteenEventManager(Man10Eighteen plugin) {
         this.plugin = plugin;
+        this.battle = new EighteenBattleManager(plugin);
     }
     @EventHandler
     public void onInventoryClickEvent(InventoryClickEvent e) {
