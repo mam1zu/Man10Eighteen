@@ -113,8 +113,11 @@ public class EighteenBattleManager {
                     plugin.p1score += 2;
                     //TODO:ゲーム終了、スコアを計算して勝敗判定させる
                     endgame();
+                    return;
                 default:
-                    break;
+                    plugin.p1score++;
+                    plugin.round++;
+
             }
         }
         if(result == 2) {
@@ -126,7 +129,10 @@ public class EighteenBattleManager {
                 case 10:
                     plugin.p2score += 2;
                     //TODO:ゲーム終了、スコアを計算して勝敗判定させる
+                    return;
                 default:
+                    plugin.p1score++;
+                    plugin.round++;
                     break;
             }
         }
