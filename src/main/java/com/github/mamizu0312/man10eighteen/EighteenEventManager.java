@@ -13,9 +13,11 @@ import org.bukkit.inventory.meta.ItemMeta;
 public class EighteenEventManager implements Listener {
     Man10Eighteen plugin;
     EighteenBattleManager battle;
+    EighteenCommandManager command;
     public EighteenEventManager(Man10Eighteen plugin) {
         this.plugin = plugin;
-        this.battle = new EighteenBattleManager(plugin);
+        command = plugin.command;
+        battle = command.battle;
     }
     @EventHandler
     public void onInventoryClickEvent(InventoryClickEvent e) {
@@ -25,7 +27,7 @@ public class EighteenEventManager implements Listener {
         }
         if(plugin.onGame.contains(p.getUniqueId())) {
             e.setCancelled(true);
-            if(battle.isPlayerP1(p)) {
+            if(plugin.onGame.get(0) == p.getUniqueId()) {
                 if(plugin.p1canchooserps){
                   if (e.getCurrentItem().getType() == Material.STONE) {
                       plugin.p1putoutfinger = plugin.rockfinger;
@@ -66,7 +68,7 @@ public class EighteenEventManager implements Listener {
                   }
                   return;
               }
-            if(battle.isPlayerP2(p)) {
+            if(plugin.onGame.get(1) == p.getUniqueId()) {
                 if(plugin.p2canchooserps) {
                     if(e.getCurrentItem().getType() == Material.STONE) {
                         plugin.p2putoutfinger = plugin.rockfinger;
@@ -103,6 +105,7 @@ public class EighteenEventManager implements Listener {
                     }
                     if(!plugin.p1canchooserps && !plugin.p2canchooserps) {
                         //TODO: 両方とも出し終わった判定なのでジャッジして次のラウンドへ
+                        battle.judge();
                     }
                 }
             }

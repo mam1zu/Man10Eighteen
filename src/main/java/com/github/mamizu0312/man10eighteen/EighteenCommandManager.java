@@ -5,13 +5,18 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+
+import static org.bukkit.Bukkit.getServer;
+
 public class EighteenCommandManager implements CommandExecutor {
     Man10Eighteen plugin;
     EighteenConfigManager config;
     EighteenBattleManager battle;
+    VaultManager vault;
     public EighteenCommandManager(Man10Eighteen plugin) {
         this.plugin = plugin;
         config = new EighteenConfigManager(plugin);
+        vault = new VaultManager(plugin);
     }
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
@@ -25,20 +30,32 @@ public class EighteenCommandManager implements CommandExecutor {
         if(args.length == 1) {
             if(args[0].equalsIgnoreCase("on")) {
                 if(!plugin.plstatus) {
+                    Bukkit.getServer().broadcastMessage(plugin.prefix + "§c§lプラグインを起動しています...");
+                    plugin.reset();
                     config.setPluginStatus(true);
-                    p.sendMessage(plugin.prefix + "§e§lプラグインをオンにしました");
+                    Bukkit.getServer().broadcastMessage(plugin.prefix + "§c§lプラグインを起動しました！");
                     return true;
                 }
+                p.sendMessage(plugin.prefix + "§c§lプラグインはすでに起動しています");
+                return true;
             }
             if(args[0].equalsIgnoreCase("off")) {
                 if(plugin.plstatus) {
-                    if(plugin.ingame) {
-                        //TODO:試合中の場合も強制終了できるメソッドを作っておくこと
+                    if(!plugin.onGame.isEmpty()) {
+                        Bukkit.getServer().broadcastMessage(plugin.prefix + "§c§lプラグインを停止しています...");
+                        config.setPluginStatus(false);
+                        battle.emergencystop();
+                        Bukkit.getServer().broadcastMessage(plugin.prefix + "§c§lプラグインを停止しました。");
+                        return true;
                     }
+                    Bukkit.getServer().broadcastMessage(plugin.prefix + "§c§lプラグインを停止しています...");
+                    plugin.reset();
                     config.setPluginStatus(false);
-                    p.sendMessage(plugin.prefix + "§c§lプラグインをオフにしました。");
+                    Bukkit.getServer().broadcastMessage(plugin.prefix + "§c§lプラグインを停止しました。");
                     return true;
                 }
+                p.sendMessage(plugin.prefix + "§c§lプラグインはすでに停止しています");
+                return true;
             }
             if(args[0].equalsIgnoreCase("help")) {
                 HelpCommand(p);
@@ -47,6 +64,24 @@ public class EighteenCommandManager implements CommandExecutor {
             if(args[0].equalsIgnoreCase("game")) {
                 p.sendMessage("§c§l掛け金を入力してください。");
                 return true;
+            }
+            if(args[0].equalsIgnoreCase("join")) {
+                if (plugin.onGame.isEmpty()) {
+                    p.sendMessage(plugin.prefix + "§c§l現在開催されていません");
+                    return true;
+                }
+                if (plugin.onGame.get(0) == p.getUniqueId()) {
+                    p.sendMessage(plugin.prefix + "§c§lあなたはすでに参加しています");
+                    return true;
+                }
+                if(vault.getBalance(p.getUniqueId()) > plugin.betmoney) {
+                    p.sendMessage(plugin.prefix + "§c§l所持金が足りません");
+                    return true;
+                }
+                getServer().broadcastMessage(plugin.prefix + "§e§l" + p.getName() + "§fさんが参加しました！ゲームを開始します...");
+                plugin.onGame.add(p.getUniqueId());
+                battle = new EighteenBattleManager(plugin, Bukkit.getPlayer(plugin.onGame.get(0)), p);
+                battle.game();
             }
         }
         if(args.length == 2 && args[0].equalsIgnoreCase("game")) {
@@ -62,7 +97,7 @@ public class EighteenCommandManager implements CommandExecutor {
             if(plugin.betmoney < plugin.minimumbet || plugin.betmoney > plugin.maximumbet) {
                 p.sendMessage(plugin.prefix + "§c§l");
             }
-            Bukkit.getServer().broadcastMessage(plugin.prefix + "§e§l"+p.getName()+"§fさんが§e"+moneyformat((int) plugin.betmoney)+"§fで試合を開きました！ §a/mer join§fで参加！");
+            getServer().broadcastMessage(plugin.prefix + "§e§l"+p.getName()+"§fさんが§e"+moneyformat((int) plugin.betmoney)+"§fで試合を開きました！ §a/mer join§fで参加！");
             plugin.onGame.add(p.getUniqueId());
         }
         return true;

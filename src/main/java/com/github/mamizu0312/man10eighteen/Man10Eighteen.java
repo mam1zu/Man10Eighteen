@@ -1,5 +1,6 @@
 package com.github.mamizu0312.man10eighteen;
 
+import org.bukkit.Warning;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -10,9 +11,9 @@ public final class Man10Eighteen extends JavaPlugin {
     boolean plstatus;
     public Inventory p1inv;
     public Inventory p2inv;
-    public int rockfinger = 0;
-    public int scissorfinger = 2;
-    public int paperfinger = 5;
+    public final int rockfinger = 0;
+    public final int scissorfinger = 2;
+    public final int paperfinger = 5;
     public int p1putoutfinger = 0;
     public int p2putoutfinger = 0;
     public boolean p1canchooserps = false;
@@ -21,8 +22,8 @@ public final class Man10Eighteen extends JavaPlugin {
     public EighteenEventManager event;
     public EighteenBattleManager battle;
     EighteenConfigManager config;
-    boolean ingame = false;
-    int round = 0;
+    EighteenCommandManager command;
+    int round = 1;
     int p1score = 0;
     int p2score = 0;
     int p1finger = 18;
@@ -45,5 +46,17 @@ public final class Man10Eighteen extends JavaPlugin {
     @Override
     public void onDisable() {
         config.writePluginStatus();
+    }
+    //注意:return直前に実行すること
+    public void reset() {
+        onGame.clear();
+        p1putoutfinger = 0;
+        p2putoutfinger = 0;
+        round = 1;
+        p1score = 0;
+        p2score = 0;
+        p1finger = 18;
+        p2finger = 18;
+        betmoney = 0;
     }
 }
