@@ -1,3 +1,9 @@
 name: Man10Eighteen
 version: ${project.version}
 main: com.github.mamizu0312.man10eighteen.Man10Eighteen
+commands:
+  mer:
+    description: Man10EighteenRps
+    default: op
+
+

@@ -36,11 +36,12 @@ public final class Man10Eighteen extends JavaPlugin {
     @Override
     public void onEnable() {
         saveDefaultConfig();
-        config.loadConfig();
         getCommand("mer").setExecutor(new EighteenCommandManager(this));
         event = new EighteenEventManager(this);
+        getServer().getPluginManager().registerEvents(event, this);
         battle = new EighteenBattleManager(this);
         config = new EighteenConfigManager(this);
+        config.loadConfig();
     }
 
     @Override

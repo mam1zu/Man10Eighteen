@@ -74,19 +74,27 @@ public class EighteenCommandManager implements CommandExecutor {
                     p.sendMessage(plugin.prefix + "§c§lあなたはすでに参加しています");
                     return true;
                 }
-                if(vault.getBalance(p.getUniqueId()) > plugin.betmoney) {
+                if(vault.getBalance(p.getUniqueId()) <= plugin.betmoney) {
                     p.sendMessage(plugin.prefix + "§c§l所持金が足りません");
                     return true;
                 }
+                vault.withdraw(p.getUniqueId(), plugin.betmoney);
                 getServer().broadcastMessage(plugin.prefix + "§e§l" + p.getName() + "§fさんが参加しました！ゲームを開始します...");
                 plugin.onGame.add(p.getUniqueId());
                 battle = new EighteenBattleManager(plugin, Bukkit.getPlayer(plugin.onGame.get(0)), p);
                 battle.game();
+                plugin.p1canchooserps = true;
+                plugin.p2canchooserps = true;
             }
         }
         if(args.length == 2 && args[0].equalsIgnoreCase("game")) {
+            if(!plugin.plstatus) {
+                p.sendMessage(plugin.prefix + "§e§l現在プラグインは停止しています");
+                return true;
+            }
             if(!plugin.onGame.isEmpty()) {
                 p.sendMessage(plugin.prefix+"§c§l現在開催中または試合中です");
+                return true;
             }
             try {
                 plugin.betmoney = Double.parseDouble(args[1]);
@@ -95,8 +103,10 @@ public class EighteenCommandManager implements CommandExecutor {
                 return true;
             }
             if(plugin.betmoney < plugin.minimumbet || plugin.betmoney > plugin.maximumbet) {
-                p.sendMessage(plugin.prefix + "§c§l");
+                p.sendMessage(plugin.prefix + "§c§l賭け金が少なすぎるまたは多すぎます");
+                return true;
             }
+            vault.withdraw(p.getUniqueId(), plugin.betmoney);
             getServer().broadcastMessage(plugin.prefix + "§e§l"+p.getName()+"§fさんが§e"+moneyformat((int) plugin.betmoney)+"§fで試合を開きました！ §a/mer join§fで参加！");
             plugin.onGame.add(p.getUniqueId());
         }
@@ -110,6 +120,7 @@ public class EighteenCommandManager implements CommandExecutor {
             p.sendMessage("§e§l/mer join§f: 試合に入ります");
             p.sendMessage("§c§l/mer on  §f: プラグインを起動します");
             p.sendMessage("§c§l/mer off §f: プラグインを停止します");
+            return;
         }
         p.sendMessage("----------"+plugin.prefix+"----------");
         p.sendMessage("§e§l/mer help§f: このページを開きます");

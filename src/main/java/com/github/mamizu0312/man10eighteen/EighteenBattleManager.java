@@ -12,7 +12,6 @@ import org.bukkit.scheduler.BukkitRunnable;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.bukkit.Bukkit.getServer;
 
 public class EighteenBattleManager {
     Man10Eighteen plugin;
@@ -27,6 +26,7 @@ public class EighteenBattleManager {
         this.plugin = plugin;
         this.p1 = p1;
         this.p2 = p2;
+        this.vault = new VaultManager(plugin);
     }
     public void game() {
         plugin.p1inv = Bukkit.createInventory(null,27,plugin.prefix);
@@ -56,63 +56,33 @@ public class EighteenBattleManager {
         papermeta.setLore(paperlore);
         paper.setItemMeta(papermeta);
 
-        ItemStack p1Skull = new ItemStack(Material.SKULL,1);
+        ItemStack p1Skull = new ItemStack(Material.SKULL_ITEM,1, (short) 3);
         SkullMeta p1SkullMeta = (SkullMeta) p1Skull.getItemMeta();
         p1SkullMeta.setDisplayName("§l§3"+p1.getName());
         OfflinePlayer p1offline = Bukkit.getOfflinePlayer(p1.getUniqueId());
         p1SkullMeta.setOwningPlayer(p1offline);
         p1Skull.setItemMeta(p1SkullMeta);
 
-        ItemStack p2Skull = new ItemStack(Material.SKULL, 1);
+        ItemStack p2Skull = new ItemStack(Material.SKULL_ITEM, 1, (short) 3);
         SkullMeta p2SkullMeta = (SkullMeta) p2Skull.getItemMeta();
         p2SkullMeta.setDisplayName("§l§c"+p2.getName());
         OfflinePlayer p2offline = Bukkit.getOfflinePlayer(p2.getUniqueId());
         p2SkullMeta.setOwningPlayer(p2offline);
         p2Skull.setItemMeta(p2SkullMeta);
-
         plugin.p1inv.setItem(3, rock);
         plugin.p1inv.setItem(12, scissor);
         plugin.p1inv.setItem(21, paper);
         plugin.p1inv.setItem(0, p1Skull);
-        plugin.p1inv.setItem(26, p2Skull);
+        plugin.p1inv.setItem(8, p2Skull);
 
         plugin.p2inv.setItem(3, rock);
         plugin.p2inv.setItem(12, scissor);
         plugin.p2inv.setItem(21, paper);
         plugin.p2inv.setItem(0, p2Skull);
-        plugin.p2inv.setItem(26, p1Skull);
+        plugin.p2inv.setItem(8, p1Skull);
 
         p1.openInventory(plugin.p1inv);
         p2.openInventory(plugin.p2inv);
-    }
-    public void endgame() {
-        p1.closeInventory();
-        p2.closeInventory();
-        plugin.p1score -= plugin.p1finger;
-        plugin.p2score -= plugin.p2finger;
-        if(plugin.p1score == plugin.p2score) {
-            getServer().broadcastMessage(plugin.prefix + "§e§l§k§r§e結果発表...§f§ka");
-            new BukkitRunnable() {
-                public void run() {
-                    getServer().broadcastMessage(plugin.prefix + "§e§l"+p1.getName()+"§fと§e"+p2.getName()+"§fは試合をしましたが、あいこでした");
-                }
-            }.runTaskLater(plugin, 60);
-        }
-        if(plugin.p1score > plugin.p2score) {
-            getServer().broadcastMessage(plugin.prefix + "§e§l§k§r§e結果発表...§f§ka");
-            new BukkitRunnable() {
-                public void run() {
-                    getServer().broadcastMessage(plugin.prefix + "§e§l"+p1.getName()+"§fの勝利！");
-                }
-            }.runTaskLater(plugin, 60);
-        } else {
-            getServer().broadcastMessage(plugin.prefix + "§e§l§k§r§e結果発表...§f§ka");
-            new BukkitRunnable() {
-                public void run() {
-                    getServer().broadcastMessage(plugin.prefix + "§e§l"+p2.getName()+"§fの勝利！");
-                }
-            }.runTaskLater(plugin, 60);
-        }
     }
     void emergencystop() {
         p1.closeInventory();
@@ -126,117 +96,80 @@ public class EighteenBattleManager {
     void judge() {
         int result = rpsjudge();
         if(result == 0) {
-            getServer().broadcastMessage(plugin.prefix + "§f§lじゃんけん...§k");
+            Bukkit.getServer().broadcastMessage(plugin.prefix + "§f§lじゃんけん...§k");
             new BukkitRunnable() {
                 public void run() {
-                    getServer().broadcastMessage(plugin.prefix + "§e§ぽん！");
+                    Bukkit.getServer().broadcastMessage(plugin.prefix + "§e§ぽん！");
                 }
-            }.runTaskLater(plugin,40);
-            new BukkitRunnable() {
-                public void run() {
-                    getServer().broadcastMessage(plugin.prefix + "§f§l第"+plugin.round+"ラウンドは§eあいこ§fでした");
-                }
-            }.runTaskLater(plugin,40);
+            }.runTaskLater(plugin, 40);
+            Bukkit.getServer().broadcastMessage(plugin.prefix + "§f§l第"+plugin.round+"ラウンドは§eあいこ§fでした");
+            if(plugin.round == 10) {
+                lastjudge();
+                return;
+            }
             plugin.round++;
+            restart();
         }
         if(result == 1) {
+            Bukkit.getServer().broadcastMessage(plugin.prefix + "§f§lじゃんけん...§k");
+            new BukkitRunnable() {
+                public void run() {
+                    Bukkit.getServer().broadcastMessage(plugin.prefix + "§e§ぽん！");
+                }
+            }.runTaskLater(plugin,40);
+
             switch(plugin.round) {
                 case 6:
-                    getServer().broadcastMessage(plugin.prefix + "§f§lじゃんけん...§k");
-                    new BukkitRunnable() {
-                        public void run() {
-                            getServer().broadcastMessage(plugin.prefix + "§e§ぽん！");
-                        }
-                    }.runTaskLater(plugin,40);
-                    new BukkitRunnable() {
-                        public void run() {
-                            getServer().broadcastMessage(plugin.prefix + "§f§l第"+plugin.round+"ラウンドは§e"+p1.getName()+"§fの勝利！");
-                        }
-                    }.runTaskLater(plugin,40);
+                    Bukkit.getServer().broadcastMessage(plugin.prefix + "§f§l第"+plugin.round+"ラウンドは§e"+p1.getName()+"§fの勝利！");
                     plugin.p1score += 2;
                     plugin.round++;
+                    restart();
                     break;
                 case 10:
-                    getServer().broadcastMessage(plugin.prefix + "§f§lじゃんけん...§k");
-                    new BukkitRunnable() {
-                        public void run() {
-                            getServer().broadcastMessage(plugin.prefix + "§e§ぽん！");
-                        }
-                    }.runTaskLater(plugin,40);
-                    new BukkitRunnable() {
-                        public void run() {
-                            getServer().broadcastMessage(plugin.prefix + "§f§l第"+plugin.round+"ラウンドは§e"+p1.getName()+"§fの勝利！");
-                        }
-                    }.runTaskLater(plugin,40);
+                    Bukkit.getServer().broadcastMessage(plugin.prefix + "§f§l第"+plugin.round+"ラウンドは§e"+p1.getName()+"§fの勝利！");
                     plugin.p1score += 2;
                     //TODO:ゲーム終了、スコアを計算して勝敗判定させる
-                    endgame();
+                    lastjudge();
                     return;
                 default:
-                    getServer().broadcastMessage(plugin.prefix + "§f§lじゃんけん...§k");
-                    new BukkitRunnable() {
-                        public void run() {
-                            getServer().broadcastMessage(plugin.prefix + "§e§ぽん！");
-                        }
-                    }.runTaskLater(plugin,40);
-                    new BukkitRunnable() {
-                        public void run() {
-                            getServer().broadcastMessage(plugin.prefix + "§f§l第"+plugin.round+"ラウンドは§e"+p1.getName()+"§fの勝利！");
-                        }
-                    }.runTaskLater(plugin,40);
+                    Bukkit.getServer().broadcastMessage(plugin.prefix + "§f§l第"+plugin.round+"ラウンドは§e"+p1.getName()+"§fの勝利！");
                     plugin.p1score++;
                     plugin.round++;
+                    restart();
                     break;
             }
         }
         if(result == 2) {
-            switch(plugin.round) {
-                case 6:
-                    getServer().broadcastMessage(plugin.prefix + "§f§lじゃんけん...§k");
-                    new BukkitRunnable() {
-                        public void run() {
-                            getServer().broadcastMessage(plugin.prefix + "§e§ぽん！");
-                        }
-                    }.runTaskLater(plugin,40);
-                    new BukkitRunnable() {
-                        public void run() {
-                            getServer().broadcastMessage(plugin.prefix + "§f§l第"+plugin.round+"ラウンドは§e"+p2.getName()+"§fの勝利！");
-                        }
-                    }.runTaskLater(plugin,40);
-                    plugin.p2score += 2;
-                    plugin.round++;
-                    break;
-                case 10:
-                    getServer().broadcastMessage(plugin.prefix + "§f§lじゃんけん...§k");
-                    new BukkitRunnable() {
-                        public void run() {
-                            getServer().broadcastMessage(plugin.prefix + "§e§ぽん！");
-                        }
-                    }.runTaskLater(plugin,40);
-                    new BukkitRunnable() {
-                        public void run() {
-                            getServer().broadcastMessage(plugin.prefix + "§f§l第"+plugin.round+"ラウンドは§e"+p2.getName()+"§fの勝利！");
-                        }
-                    }.runTaskLater(plugin,40);
-                    plugin.p2score += 2;
-                    //TODO:ゲーム終了、スコアを計算して勝敗判定させる
-                    return;
-                default:
-                    getServer().broadcastMessage(plugin.prefix + "§f§lじゃんけん...§k");
-                    new BukkitRunnable() {
-                        public void run() {
-                            getServer().broadcastMessage(plugin.prefix + "§e§ぽん！");
-                        }
-                    }.runTaskLater(plugin,40);
-                    new BukkitRunnable() {
-                        public void run() {
-                            getServer().broadcastMessage(plugin.prefix + "§f§l第"+plugin.round+"ラウンドは§e"+p2.getName()+"§fの勝利！");
-                        }
-                    }.runTaskLater(plugin,40);
-                    plugin.p1score++;
-                    plugin.round++;
-                    break;
-            }
+            Bukkit.getServer().broadcastMessage(plugin.prefix + "§f§lじゃんけん...§k");
+            new BukkitRunnable() {
+                public void run() {
+                    Bukkit.getServer().broadcastMessage(plugin.prefix + "§e§ぽん！");
+                }
+            }.runTaskLater(plugin, 40);
+            new BukkitRunnable() {
+                public void run() {
+                    switch (plugin.round) {
+                        case 6:
+                            Bukkit.getServer().broadcastMessage(plugin.prefix + "§f§l第" + plugin.round + "ラウンドは§e" + p2.getName() + "§fの勝利！");
+                            plugin.p2score += 2;
+                            plugin.round++;
+                            restart();
+                            break;
+                        case 10:
+                            Bukkit.getServer().broadcastMessage(plugin.prefix + "§f§l第" + plugin.round + "ラウンドは§e" + p2.getName() + "§fの勝利！");
+                            plugin.p2score += 2;
+                            judge();
+                            return;
+                        default:
+                            Bukkit.getServer().broadcastMessage(plugin.prefix + "§f§l第" + plugin.round + "ラウンドは§e" + p2.getName() + "§fの勝利！");
+                            restart();
+                            plugin.p1score++;
+                            plugin.round++;
+                            restart();
+                            break;
+                    }
+                }
+            }.runTaskLater(plugin, 40);
         }
         p1.updateInventory();
         p2.updateInventory();
@@ -245,7 +178,30 @@ public class EighteenBattleManager {
         p1.openInventory(plugin.p1inv);
         p2.openInventory(plugin.p2inv);
     }
-
+    void lastjudge() {
+        plugin.p1score -= plugin.p1finger;
+        plugin.p2score -= plugin.p2finger;
+        Bukkit.getServer().broadcastMessage(plugin.prefix + "§f試合終了! 結果は...§kaaa");
+        new BukkitRunnable() {
+            public void run() {
+                Bukkit.getServer().broadcastMessage(plugin.prefix + "§e§l"+p1.getName()+"§fのスコア: "+plugin.p1score);
+                Bukkit.getServer().broadcastMessage(plugin.prefix + "§e§l"+p2.getName()+"§fのスコア: "+plugin.p2score);
+            }
+        }.runTaskLater(plugin, 60);
+        if(plugin.p1score == plugin.p2score) {
+            Bukkit.getServer().broadcastMessage(plugin.prefix + "§f§l引き分けでした！試合を終了します");
+            vault.deposit(p1.getUniqueId(), plugin.betmoney);
+            vault.deposit(p2.getUniqueId(), plugin.betmoney);
+            return;
+        }
+        if(plugin.p1score > plugin.p2score) {
+            Bukkit.getServer().broadcastMessage(plugin.prefix + "§e§l"+p1.getName()+"§fの勝利です！試合を終了します");
+            vault.deposit(p1.getUniqueId(), plugin.betmoney *= 2);
+        } else {
+            Bukkit.getServer().broadcastMessage(plugin.prefix + "§e§l"+p2.getName()+"§fの勝利です！試合を終了します");
+            vault.deposit(p2.getUniqueId(), plugin.betmoney *= 2);
+        }
+    }
     int rpsjudge() {
         ////////////////////////////
         ///あいこ0、p1勝利1、p2勝利2//

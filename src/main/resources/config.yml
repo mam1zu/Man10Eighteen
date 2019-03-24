@@ -2,5 +2,4 @@ prefix: "§l[§dM§fa§an§f10§6Eighteen§f]§r"
 pluginstatus: false
 minimumBetMoney: 10000000
 maximumBetMoney: 1000000000
-//betweenMatchToMatchWaitは内部でtickに変換されるためsecondで入力してください
 betweenMatchToMatchWait: 30
