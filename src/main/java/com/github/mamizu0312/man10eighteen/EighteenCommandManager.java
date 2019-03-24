@@ -17,7 +17,7 @@ public class EighteenCommandManager implements CommandExecutor {
     public EighteenCommandManager(Man10Eighteen plugin) {
         this.plugin = plugin;
         config = new EighteenConfigManager(plugin);
-        vault = new VaultManager(plugin);
+        vault = plugin.vault;
     }
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
@@ -106,10 +106,12 @@ public class EighteenCommandManager implements CommandExecutor {
                     return true;
                 }
                 Random r = new Random();
-                if(r.nextInt(plugin.chance) == 1) {
+                if(r.nextInt(plugin.chance)+1 == 0) {
+
                     plugin.fevertime = true;
                     getServer().broadcastMessage(plugin.prefix + "§e§l" + p.getName() + "§fさんが参加しました！ゲームを開始します...&ka");
                     getServer().broadcastMessage(plugin.prefix + "&ka§r§e§lBonusTime§ka");
+                    vault.withdraw(p.getUniqueId(), plugin.betmoney);
                     plugin.prewait = false;
                     plugin.onGame.add(p.getUniqueId());
                     battle = new EighteenBattleManager(plugin, Bukkit.getPlayer(plugin.onGame.get(0)), p);
@@ -173,6 +175,7 @@ public class EighteenCommandManager implements CommandExecutor {
             p.sendMessage("§e§l/mer help§f: このページを開きます");
             p.sendMessage("§e§l/mer game§f: 新しく試合を開きます");
             p.sendMessage("§e§l/mer join§f: 試合に入ります");
+            p.sendMessage("§e§l/mer reopen§f: メニューを再度開きます");
             p.sendMessage("§c§l/mer on  §f: プラグインを起動します");
             p.sendMessage("§c§l/mer off §f: プラグインを停止します");
             return;

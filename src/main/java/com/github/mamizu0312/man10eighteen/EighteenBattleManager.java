@@ -23,7 +23,7 @@ public class EighteenBattleManager {
     ItemStack p2Skull = new ItemStack(Material.SKULL_ITEM, 1, (short) 3);
     public EighteenBattleManager(Man10Eighteen plugin) {
         this.plugin = plugin;
-        this.vault = new VaultManager(plugin);
+        this.vault = plugin.vault;
     }
     public EighteenBattleManager(Man10Eighteen plugin, Player p1, Player p2) {
         this.plugin = plugin;

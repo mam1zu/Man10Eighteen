@@ -19,6 +19,7 @@ public final class Man10Eighteen extends JavaPlugin {
     public boolean p1canchooserps = false;
     public boolean p2canchooserps = false;
     String prefix;
+    VaultManager vault;
     public EighteenEventManager event;
     public EighteenBattleManager battle;
     EighteenConfigManager config;
@@ -44,6 +45,7 @@ public final class Man10Eighteen extends JavaPlugin {
         getServer().getPluginManager().registerEvents(event, this);
         config = new EighteenConfigManager(this);
         config.loadConfig();
+        vault = new VaultManager(this);
     }
 
     @Override
