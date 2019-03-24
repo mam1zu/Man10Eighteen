@@ -9,8 +9,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.scheduler.BukkitRunnable;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 
 public class EighteenBattleManager {
@@ -19,6 +18,9 @@ public class EighteenBattleManager {
     Player p1;
     Player p2;
 
+    ItemStack roundwatch = new ItemStack(Material.WATCH,1);
+    ItemStack p1Skull = new ItemStack(Material.SKULL_ITEM,1, (short) 3);
+    ItemStack p2Skull = new ItemStack(Material.SKULL_ITEM, 1, (short) 3);
     public EighteenBattleManager(Man10Eighteen plugin) {
         this.plugin = plugin;
         this.vault = new VaultManager(plugin);
@@ -189,6 +191,41 @@ public class EighteenBattleManager {
     void restart() {
         plugin.p1canchooserps = true;
         plugin.p2canchooserps = true;
+        ItemStack p1Skull = new ItemStack(Material.SKULL_ITEM,1, (short) 3);
+        SkullMeta p1skullmeta = (SkullMeta) p1Skull.getItemMeta();
+        List<String> p1skulllore = new ArrayList<>();
+        p1skulllore.add("§r§6Score§f: §d"+plugin.p1score);
+        p1skulllore.add("§r§6残りの指の数: §d"+plugin.p1finger);
+        p1skullmeta.setLore(p1skulllore);
+        p1skullmeta.setDisplayName("§l§3"+p1.getName());
+        OfflinePlayer p1offline = Bukkit.getOfflinePlayer(p1.getUniqueId());
+        p1skullmeta.setOwningPlayer(p1offline);
+        p1Skull.setItemMeta(p1skullmeta);
+
+        ItemStack p2Skull = new ItemStack(Material.SKULL_ITEM, 1, (short) 3);
+        SkullMeta p2skullmeta = (SkullMeta) p2Skull.getItemMeta();
+        List<String> p2skulllore = new ArrayList<>();
+        p2skulllore.add("§6Score§f: §d"+plugin.p2score);
+        p2skulllore.add("§r§6残りの指の数§f: §d"+plugin.p2finger);
+        p2skullmeta.setLore(p2skulllore);
+        p2skullmeta.setDisplayName("§l§c"+p2.getName());
+        OfflinePlayer p2offline = Bukkit.getOfflinePlayer(p2.getUniqueId());
+        p2skullmeta.setOwningPlayer(p2offline);
+        p2Skull.setItemMeta(p2skullmeta);
+
+        ItemStack roundwatch = new ItemStack(Material.WATCH,1);
+        ItemMeta roundwatchmeta = roundwatch.getItemMeta();
+        List<String> roundwatchlore = new ArrayList<>();
+        roundwatchlore.add("§6現在のラウンド§f: §d"+plugin.round);
+        roundwatchmeta.setLore(roundwatchlore);
+        roundwatchmeta.setDisplayName("§cラウンドウォッチ");
+        roundwatch.setItemMeta(roundwatchmeta);
+        plugin.p1inv.setItem(0, p1Skull);
+        plugin.p1inv.setItem(8, p2Skull);
+        plugin.p1inv.setItem(4, roundwatch);
+        plugin.p2inv.setItem(0, p2Skull);
+        plugin.p2inv.setItem(8, p1Skull);
+        plugin.p2inv.setItem(4, roundwatch);
         p1.openInventory(plugin.p1inv);
         p2.openInventory(plugin.p2inv);
         p1.updateInventory();
@@ -206,14 +243,45 @@ public class EighteenBattleManager {
                     Bukkit.getServer().broadcastMessage(plugin.prefix + "§f§l引き分けでした！試合を終了します");
                     vault.deposit(p1.getUniqueId(), plugin.betmoney);
                     vault.deposit(p2.getUniqueId(), plugin.betmoney);
+                    plugin.fevertime = false;
                     return;
                 }
                 if(plugin.p1score > plugin.p2score) {
                     Bukkit.getServer().broadcastMessage(plugin.prefix + "§e§l"+p1.getName()+"§fの勝利です！試合を終了します");
+                    if(plugin.fevertime) {
+                        List<Player> serverplayer = new LinkedList<>();
+                        for(Player player : Bukkit.getOnlinePlayers()){
+                            serverplayer.add(player);
+                        }
+                        Random r = new Random();
+                        Bukkit.getServer().broadcastMessage(plugin.prefix + "§e§l"+p1.getName()+"§fと§e"+serverplayer.get(r.nextInt(serverplayer.size())).getName()+"§fは追加ボーナスを受け取った！");
+                        vault.deposit(p1.getUniqueId(), plugin.betmoney *= 2);
+                        vault.deposit(p1.getUniqueId(),plugin.specialbonus / 2);
+                        vault.deposit(serverplayer.get(r.nextInt(serverplayer.size())).getUniqueId(), plugin.specialbonus / 2);
+                        plugin.specialbonus = 0;
+                        plugin.fevertime = false;
+                        plugin.reset();
+                        return;
+                    }
                     vault.deposit(p1.getUniqueId(), plugin.betmoney *= 2);
                     plugin.reset();
                 } else {
                     Bukkit.getServer().broadcastMessage(plugin.prefix + "§e§l"+p2.getName()+"§fの勝利です！試合を終了します");
+                    if(plugin.fevertime) {
+                        List<Player> serverplayer = new LinkedList<>();
+                        for(Player player : Bukkit.getOnlinePlayers()){
+                            serverplayer.add(player);
+                        }
+                        Random r = new Random();
+                        Bukkit.getServer().broadcastMessage(plugin.prefix + "§e§l"+p2.getName()+"§fと§e"+serverplayer.get(r.nextInt(serverplayer.size())).getName()+"§fは追加ボーナスを受け取った！");
+                        vault.deposit(p2.getUniqueId(), plugin.betmoney *= 2);
+                        vault.deposit(p2.getUniqueId(),plugin.specialbonus / 2);
+                        vault.deposit(serverplayer.get(r.nextInt(serverplayer.size())).getUniqueId(), plugin.specialbonus / 2);
+                        plugin.specialbonus = 0;
+                        plugin.fevertime = false;
+                        plugin.reset();
+                        return;
+                    }
                     vault.deposit(p2.getUniqueId(), plugin.betmoney *= 2);
                     plugin.reset();
                 }

@@ -22,6 +22,9 @@ public class EighteenEventManager implements Listener {
             e.setCancelled(true);
             if(plugin.onGame.get(0) == p.getUniqueId()) {
                 if(plugin.p1canchooserps){
+                    if(e.getCurrentItem() == null) {
+                        return;
+                    }
                   if (e.getCurrentItem().getType() == Material.STONE) {
                       plugin.p1putoutfinger = plugin.rockfinger;
                       plugin.p1canchooserps = false;
@@ -54,6 +57,9 @@ public class EighteenEventManager implements Listener {
               }
             if(plugin.onGame.get(1) == p.getUniqueId()) {
                 if(plugin.p2canchooserps) {
+                    if(e.getCurrentItem() == null) {
+                        return;
+                    }
                     if(e.getCurrentItem().getType() == Material.STONE) {
                         plugin.p2putoutfinger = plugin.rockfinger;
                         p.closeInventory();

@@ -5,6 +5,7 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import java.util.Random;
 
 import static org.bukkit.Bukkit.getServer;
 
@@ -28,8 +29,15 @@ public class EighteenCommandManager implements CommandExecutor {
             HelpCommand(p);
         }
         if(args.length == 1) {
-            if(args[0].equalsIgnoreCase("on")) {
-                if(!plugin.plstatus) {
+            if (!p.hasPermission("mer.play")) {
+                p.sendMessage(plugin.prefix + "§4§l権限がありません");
+                return true;
+            }
+            if (args[0].equalsIgnoreCase("on")) {
+                if(!p.hasPermission("mer.staff")) {
+                    p.sendMessage(plugin.prefix + "§4§l権限がありません");
+                }
+                if (!plugin.plstatus) {
                     Bukkit.getServer().broadcastMessage(plugin.prefix + "§c§lプラグインを起動しています...");
                     plugin.reset();
                     config.setPluginStatus(true);
@@ -39,15 +47,19 @@ public class EighteenCommandManager implements CommandExecutor {
                 p.sendMessage(plugin.prefix + "§c§lプラグインはすでに起動しています");
                 return true;
             }
-            if(args[0].equalsIgnoreCase("off")) {
-                if(plugin.plstatus) {
-                    if(!plugin.onGame.isEmpty()) {
+            if (args[0].equalsIgnoreCase("off")) {
+                if(!p.hasPermission("mer.staff")) {
+                    p.sendMessage(plugin.prefix + "§4§l権限がありません");
+                }
+                if (plugin.plstatus) {
+                    if (!plugin.onGame.isEmpty()) {
                         Bukkit.getServer().broadcastMessage(plugin.prefix + "§c§lプラグインを停止しています...");
                         config.setPluginStatus(false);
-                        if(plugin.onGame.get(0) == null) {
+                        if(plugin.prewait) {
                             p.sendMessage(plugin.prefix + "§c§l試合がキャンセルされました。賭け金は返金されます");
                             vault.deposit(p.getUniqueId(), plugin.betmoney);
                             plugin.onGame.clear();
+                            Bukkit.getServer().broadcastMessage(plugin.prefix + "§c§lプラグインを停止しました。");
                             return true;
                         }
                         battle.emergencystop();
@@ -61,6 +73,15 @@ public class EighteenCommandManager implements CommandExecutor {
                     return true;
                 }
                 p.sendMessage(plugin.prefix + "§c§lプラグインはすでに停止しています");
+                return true;
+            }
+            if(args[0].equalsIgnoreCase("reload")) {
+                if(!p.hasPermission("mer.staff")) {
+                    p.sendMessage(plugin.prefix + "§4§l権限がありません");
+                    return true;
+                }
+                config.reload();
+                p.sendMessage(plugin.prefix + "§e§lconfigをリロードしました。");
                 return true;
             }
             if(args[0].equalsIgnoreCase("help")) {
@@ -84,8 +105,23 @@ public class EighteenCommandManager implements CommandExecutor {
                     p.sendMessage(plugin.prefix + "§c§l所持金が足りません");
                     return true;
                 }
+                Random r = new Random();
+                if(r.nextInt(plugin.chance) == 1) {
+                    plugin.fevertime = true;
+                    getServer().broadcastMessage(plugin.prefix + "§e§l" + p.getName() + "§fさんが参加しました！ゲームを開始します...&ka");
+                    getServer().broadcastMessage(plugin.prefix + "&ka§r§e§lBonusTime§ka");
+                    plugin.prewait = false;
+                    plugin.onGame.add(p.getUniqueId());
+                    battle = new EighteenBattleManager(plugin, Bukkit.getPlayer(plugin.onGame.get(0)), p);
+                    plugin.event.battle =  battle;
+                    battle.game();
+                    plugin.p1canchooserps = true;
+                    plugin.p2canchooserps = true;
+                    return true;
+                }
                 vault.withdraw(p.getUniqueId(), plugin.betmoney);
                 getServer().broadcastMessage(plugin.prefix + "§e§l" + p.getName() + "§fさんが参加しました！ゲームを開始します...");
+                plugin.prewait = false;
                 plugin.onGame.add(p.getUniqueId());
                 battle = new EighteenBattleManager(plugin, Bukkit.getPlayer(plugin.onGame.get(0)), p);
                 plugin.event.battle =  battle;
@@ -126,6 +162,7 @@ public class EighteenCommandManager implements CommandExecutor {
             }
             vault.withdraw(p.getUniqueId(), plugin.betmoney);
             getServer().broadcastMessage(plugin.prefix + "§e§l"+p.getName()+"§fさんが§e"+moneyformat((int) plugin.betmoney)+"§fで試合を開きました！ §a/mer join§fで参加！");
+            plugin.prewait = true;
             plugin.onGame.add(p.getUniqueId());
         }
         return true;

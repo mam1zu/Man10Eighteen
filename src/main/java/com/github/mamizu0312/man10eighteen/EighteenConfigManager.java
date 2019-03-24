@@ -9,8 +9,8 @@ public class EighteenConfigManager {
     public void loadConfig() {
         plugin.prefix = plugin.getConfig().getString("prefix");
         plugin.plstatus = plugin.getConfig().getBoolean("pluginstatus");
-        plugin.minimumbet = plugin.getConfig().getInt("minimumBetMoney");
-        plugin.maximumbet = plugin.getConfig().getInt("maximumBetMoney");
+        plugin.specialbonus = plugin.getConfig().getInt("specialbonusstock");
+        plugin.chance = plugin.getConfig().getInt("chance");
     }
     public void setPluginStatus(boolean plstatus) {
         plugin.plstatus = plstatus;
@@ -18,8 +18,11 @@ public class EighteenConfigManager {
         plugin.saveConfig();
         plugin.reloadConfig();
     }
-    public void writePluginStatus() {
+    public void reload() {
+        plugin.reloadConfig();
+    }
+    public void save() {
         plugin.getConfig().set("pluginstatus", plugin.plstatus);
-        plugin.saveConfig();
+        plugin.getConfig().set("specialbonusstock",plugin.specialbonus);
     }
 }

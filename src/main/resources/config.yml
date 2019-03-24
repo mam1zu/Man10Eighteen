@@ -1,5 +1,6 @@
 prefix: "§l[§dM§fa§an§f10§6Eighteen§f]§r"
 pluginstatus: false
-minimumBetMoney: 10000000
-maximumBetMoney: 1000000000
-betweenMatchToMatchWait: 30
+#specialbonusのストックです。
+specialbonusstock: 0
+#chanceはfevertimeが起こる確率です。 n分の1の確立になります。
+chance: 3
