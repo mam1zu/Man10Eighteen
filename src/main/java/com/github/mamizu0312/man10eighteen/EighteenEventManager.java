@@ -48,7 +48,6 @@ public class EighteenEventManager implements Listener {
                         plugin.p1canchooserps = false;
                     }
                     if(!plugin.p1canchooserps && !plugin.p2canchooserps) {
-                        //TODO:両方とも出し終わった判定なのでジャッジして次のラウンドへ
                         battle.judge();
                     }
                   }
@@ -81,7 +80,6 @@ public class EighteenEventManager implements Listener {
                         plugin.p2canchooserps = false;
                     }
                     if(!plugin.p1canchooserps && !plugin.p2canchooserps) {
-                        //TODO: 両方とも出し終わった判定なのでジャッジして次のラウンドへ
                         battle.judge();
                     }
                 }

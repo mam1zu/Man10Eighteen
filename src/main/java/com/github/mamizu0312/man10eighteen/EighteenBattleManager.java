@@ -67,7 +67,7 @@ public class EighteenBattleManager {
         OfflinePlayer p1offline = Bukkit.getOfflinePlayer(p1.getUniqueId());
         p1skullmeta.setOwningPlayer(p1offline);
         p1Skull.setItemMeta(p1skullmeta);
-        
+
         ItemStack p2Skull = new ItemStack(Material.SKULL_ITEM, 1, (short) 3);
         SkullMeta p2skullmeta = (SkullMeta) p2Skull.getItemMeta();
         List<String> p2skulllore = new ArrayList<>();
@@ -147,7 +147,6 @@ public class EighteenBattleManager {
                         case 10:
                             Bukkit.getServer().broadcastMessage(plugin.prefix + "§f§l第" + plugin.round + "ラウンドは§e" + p1.getName() + "§fの勝利！");
                             plugin.p1score += 2;
-                            //TODO:ゲーム終了、スコアを計算して勝敗判定させる
                             lastjudge();
                             return;
                         default:
