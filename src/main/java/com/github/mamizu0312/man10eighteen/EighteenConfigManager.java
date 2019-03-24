@@ -14,6 +14,7 @@ public class EighteenConfigManager {
     }
     public void setPluginStatus(boolean plstatus) {
         plugin.plstatus = plstatus;
+        plugin.getConfig().set("pluginstatus", plugin.plstatus);
         plugin.saveConfig();
         plugin.reloadConfig();
     }

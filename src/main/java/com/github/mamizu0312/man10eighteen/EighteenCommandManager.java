@@ -44,6 +44,12 @@ public class EighteenCommandManager implements CommandExecutor {
                     if(!plugin.onGame.isEmpty()) {
                         Bukkit.getServer().broadcastMessage(plugin.prefix + "§c§lプラグインを停止しています...");
                         config.setPluginStatus(false);
+                        if(plugin.onGame.get(0) == null) {
+                            p.sendMessage(plugin.prefix + "§c§l試合がキャンセルされました。賭け金は返金されます");
+                            vault.deposit(p.getUniqueId(), plugin.betmoney);
+                            plugin.onGame.clear();
+                            return true;
+                        }
                         battle.emergencystop();
                         Bukkit.getServer().broadcastMessage(plugin.prefix + "§c§lプラグインを停止しました。");
                         return true;
@@ -62,7 +68,7 @@ public class EighteenCommandManager implements CommandExecutor {
                 return true;
             }
             if(args[0].equalsIgnoreCase("game")) {
-                p.sendMessage("§c§l掛け金を入力してください。");
+                p.sendMessage(plugin.prefix + "§c§l掛け金を入力してください。");
                 return true;
             }
             if(args[0].equalsIgnoreCase("join")) {
@@ -82,9 +88,21 @@ public class EighteenCommandManager implements CommandExecutor {
                 getServer().broadcastMessage(plugin.prefix + "§e§l" + p.getName() + "§fさんが参加しました！ゲームを開始します...");
                 plugin.onGame.add(p.getUniqueId());
                 battle = new EighteenBattleManager(plugin, Bukkit.getPlayer(plugin.onGame.get(0)), p);
+                plugin.event.battle =  battle;
                 battle.game();
                 plugin.p1canchooserps = true;
                 plugin.p2canchooserps = true;
+            }
+            if(args[0].equalsIgnoreCase("reopen")) {
+                if(plugin.onGame.get(0) == p.getUniqueId()) {
+                    p.openInventory(plugin.p1inv);
+                    return true;
+                }
+                if(plugin.onGame.get(1) == p.getUniqueId()) {
+                    p.openInventory(plugin.p2inv);
+                    return true;
+                }
+                p.sendMessage(plugin.prefix + "§c§lあなたは試合に参加していません");
             }
         }
         if(args.length == 2 && args[0].equalsIgnoreCase("game")) {
@@ -126,8 +144,13 @@ public class EighteenCommandManager implements CommandExecutor {
         p.sendMessage("§e§l/mer help§f: このページを開きます");
         p.sendMessage("§e§l/mer game§f: 新しく試合を開きます");
         p.sendMessage("§e§l/mer join§f: 試合に入ります");
+        p.sendMessage("§e§l/mer reopen§f: メニューを再度開きます");
     }
     String moneyformat(int money) {
+        if(money >= 1000000000) {
+            int under1000m = money - 1000000000;
+            return money / 100000000+"億"+under1000m+"万円";
+        }
         if(money >= 100000000) {
             int under100m = money - 100000000;
             return money / 100000000+"億"+under100m+"万円";

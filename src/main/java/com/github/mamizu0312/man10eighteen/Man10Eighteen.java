@@ -8,6 +8,7 @@ import java.util.*;
 
 public final class Man10Eighteen extends JavaPlugin {
     public List<UUID> onGame = new ArrayList<>();
+    public List<UUID> onWait = new ArrayList<>();
     boolean plstatus;
     public Inventory p1inv;
     public Inventory p2inv;
@@ -22,7 +23,6 @@ public final class Man10Eighteen extends JavaPlugin {
     public EighteenEventManager event;
     public EighteenBattleManager battle;
     EighteenConfigManager config;
-    EighteenCommandManager command;
     int round = 1;
     int p1score = 0;
     int p2score = 0;
@@ -39,7 +39,6 @@ public final class Man10Eighteen extends JavaPlugin {
         getCommand("mer").setExecutor(new EighteenCommandManager(this));
         event = new EighteenEventManager(this);
         getServer().getPluginManager().registerEvents(event, this);
-        battle = new EighteenBattleManager(this);
         config = new EighteenConfigManager(this);
         config.loadConfig();
     }
@@ -49,6 +48,7 @@ public final class Man10Eighteen extends JavaPlugin {
         config.writePluginStatus();
     }
     //注意:return直前に実行すること
+
     public void reset() {
         onGame.clear();
         p1putoutfinger = 0;
@@ -59,5 +59,6 @@ public final class Man10Eighteen extends JavaPlugin {
         p1finger = 18;
         p2finger = 18;
         betmoney = 0;
+        this.battle = new EighteenBattleManager(this);
     }
 }
