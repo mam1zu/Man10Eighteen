@@ -14,6 +14,7 @@ import java.util.*;
 
 public class EighteenBattleManager {
     Man10Eighteen plugin;
+    EighteenConfigManager config;
     VaultManager vault;
     Player p1;
     Player p2;
@@ -30,6 +31,8 @@ public class EighteenBattleManager {
         this.p1 = p1;
         this.p2 = p2;
         this.vault = new VaultManager(plugin);
+        this.config = new EighteenConfigManager(plugin);
+
     }
     public void game() {
         plugin.p1inv = Bukkit.createInventory(null,27,plugin.prefix);
@@ -271,7 +274,8 @@ public class EighteenBattleManager {
                         plugin.reset();
                         return;
                     }
-                    vault.deposit(p1.getUniqueId(), plugin.betmoney *= 2);
+                    plugin.specialbonus += plugin.betmoney * 0.05;
+                    vault.deposit(p1.getUniqueId(), plugin.betmoney * 2 - plugin.betmoney * 0.05);
                     plugin.reset();
                 } else {
                     Bukkit.getServer().broadcastMessage(plugin.prefix + "§e§l"+p2.getName()+"§fの勝利です！試合を終了します");
@@ -290,7 +294,9 @@ public class EighteenBattleManager {
                         plugin.reset();
                         return;
                     }
-                    vault.deposit(p2.getUniqueId(), plugin.betmoney *= 2);
+                    plugin.specialbonus += plugin.betmoney * 0.05;
+                    config.reload();
+                    vault.deposit(p2.getUniqueId(), plugin.betmoney * 2 - plugin.betmoney * 0.05);
                     plugin.reset();
                 }
             }
