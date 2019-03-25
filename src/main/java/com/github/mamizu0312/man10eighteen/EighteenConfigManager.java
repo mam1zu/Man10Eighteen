@@ -19,6 +19,7 @@ public class EighteenConfigManager {
         plugin.reloadConfig();
     }
     public void reload() {
+        loadConfig();
         plugin.reloadConfig();
     }
     public void save() {

@@ -110,18 +110,17 @@ public class EighteenCommandManager implements CommandExecutor {
                 }
                 Random r = new Random();
                 if(r.nextInt(plugin.chance)+1 == 1) {
-
                     plugin.fevertime = true;
-                    getServer().broadcastMessage(plugin.prefix + "§e§l" + p.getName() + "§fさんが参加しました！ゲームを開始します...&ka");
-                    getServer().broadcastMessage(plugin.prefix + "&ka§r§e§lBonusTime§ka");
+                    getServer().broadcastMessage(plugin.prefix + "§e§l" + p.getName() + "§fさんが参加しました！ゲームを開始します...§ka");
+                    getServer().broadcastMessage(plugin.prefix + "§ka§r§e§lBonusTime§ka");
                     vault.withdraw(p.getUniqueId(), plugin.betmoney);
-                    plugin.prewait = false;
                     plugin.onGame.add(p.getUniqueId());
                     battle = new EighteenBattleManager(plugin, Bukkit.getPlayer(plugin.onGame.get(0)), p);
                     plugin.event.battle =  battle;
                     battle.game();
                     plugin.p1canchooserps = true;
                     plugin.p2canchooserps = true;
+                    plugin.prewait = false;
                     return true;
                 }
                 vault.withdraw(p.getUniqueId(), plugin.betmoney);
