@@ -44,7 +44,7 @@ public final class Man10Eighteen extends JavaPlugin {
         event = new EighteenEventManager(this);
         getServer().getPluginManager().registerEvents(event, this);
         config = new EighteenConfigManager(this);
-        config.loadConfig();
+        config.load();
         vault = new VaultManager(this);
     }
 

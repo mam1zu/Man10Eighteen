@@ -6,7 +6,7 @@ public class EighteenConfigManager {
     public EighteenConfigManager(Man10Eighteen plugin) {
         this.plugin = plugin;
     }
-    public void loadConfig() {
+    public void load() {
         plugin.prefix = plugin.getConfig().getString("prefix");
         plugin.plstatus = plugin.getConfig().getBoolean("pluginstatus");
         plugin.specialbonus = plugin.getConfig().getInt("specialbonusstock");
@@ -19,7 +19,8 @@ public class EighteenConfigManager {
         plugin.reloadConfig();
     }
     public void reload() {
-        loadConfig();
+        save();
+        load();
         plugin.reloadConfig();
     }
     public void save() {

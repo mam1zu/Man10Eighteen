@@ -31,7 +31,7 @@ public class EighteenBattleManager {
         this.p1 = p1;
         this.p2 = p2;
         this.vault = new VaultManager(plugin);
-        this.config = new EighteenConfigManager(plugin);
+        this.config = plugin.config;
 
     }
     public void game() {
