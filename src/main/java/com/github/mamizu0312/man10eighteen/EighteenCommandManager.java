@@ -97,6 +97,10 @@ public class EighteenCommandManager implements CommandExecutor {
                     p.sendMessage(plugin.prefix + "§c§l現在開催されていません");
                     return true;
                 }
+                if(!plugin.prewait) {
+                    p.sendMessage(plugin.prefix+"§c§l現在開催中です");
+                    return true;
+                }
                 if (plugin.onGame.get(0) == p.getUniqueId()) {
                     p.sendMessage(plugin.prefix + "§c§lあなたはすでに参加しています");
                     return true;
@@ -106,7 +110,7 @@ public class EighteenCommandManager implements CommandExecutor {
                     return true;
                 }
                 Random r = new Random();
-                if(r.nextInt(plugin.chance)+1 == 0) {
+                if(r.nextInt(plugin.chance)+1 == 1) {
 
                     plugin.fevertime = true;
                     getServer().broadcastMessage(plugin.prefix + "§e§l" + p.getName() + "§fさんが参加しました！ゲームを開始します...&ka");
@@ -141,6 +145,26 @@ public class EighteenCommandManager implements CommandExecutor {
                     return true;
                 }
                 p.sendMessage(plugin.prefix + "§c§lあなたは試合に参加していません");
+                return true;
+            }
+            if(args[0].equalsIgnoreCase("stop")) {
+                if(!p.hasPermission("mer.staff")) {
+                    p.sendMessage(plugin.prefix + "§4§l権限がありません");
+                    return true;
+                }
+                if(plugin.onGame.isEmpty()) {
+                    p.sendMessage(plugin.prefix + "§c§l現在開催されていません");
+                    return true;
+                }
+                if(plugin.prewait) {
+                    Bukkit.getServer().broadcastMessage(plugin.prefix + "§4§l試合がキャンセルされました");
+                    p.sendMessage(plugin.prefix + "§c§l試合がキャンセルされました。賭け金は返金されます");
+                    vault.deposit(p.getUniqueId(), plugin.betmoney);
+                    plugin.onGame.clear();
+                    return true;
+                }
+                battle.emergencystop();
+                return true;
             }
         }
         if(args.length == 2 && args[0].equalsIgnoreCase("game")) {
@@ -149,7 +173,7 @@ public class EighteenCommandManager implements CommandExecutor {
                 return true;
             }
             if(!plugin.onGame.isEmpty()) {
-                p.sendMessage(plugin.prefix+"§c§l現在開催中または試合中です");
+                p.sendMessage(plugin.prefix+"§c§l現在開催中です");
                 return true;
             }
             try {
@@ -178,6 +202,7 @@ public class EighteenCommandManager implements CommandExecutor {
             p.sendMessage("§e§l/mer reopen§f: メニューを再度開きます");
             p.sendMessage("§c§l/mer on  §f: プラグインを起動します");
             p.sendMessage("§c§l/mer off §f: プラグインを停止します");
+            p.sendMessage("§c§l/mer stop §f: 試合をストップします");
             return;
         }
         p.sendMessage("----------"+plugin.prefix+"----------");
