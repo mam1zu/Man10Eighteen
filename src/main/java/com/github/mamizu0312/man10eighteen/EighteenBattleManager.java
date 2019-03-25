@@ -271,14 +271,13 @@ public class EighteenBattleManager {
                         }
                         Random r = new Random();
                         Player bonusplayer = serverplayer.get(r.nextInt(serverplayer.size()));
-                        while(bonusplayer == p1) {
-                            bonusplayer = serverplayer.get(r.nextInt(serverplayer.size()));
-                        }
+                        serverplayer.remove(p1);
                         Bukkit.getServer().broadcastMessage(plugin.prefix + "§e§l"+p1.getName()+"§fと§e"+bonusplayer.getName()+"§fは追加ボーナスを受け取った！");
                         vault.deposit(p1.getUniqueId(), plugin.betmoney *= 2);
                         vault.deposit(p1.getUniqueId(),plugin.specialbonus / 2);
                         vault.deposit(serverplayer.get(r.nextInt(serverplayer.size())).getUniqueId(), plugin.specialbonus / 2);
                         plugin.specialbonus = 0;
+                        config.reload();
                         plugin.fevertime = false;
                         plugin.reset();
                         return;
@@ -293,16 +292,15 @@ public class EighteenBattleManager {
                         for(Player player : Bukkit.getOnlinePlayers()){
                             serverplayer.add(player);
                         }
+                        serverplayer.remove(p2);
                         Random r = new Random();
                         Player bonusplayer = serverplayer.get(r.nextInt(serverplayer.size()));
-                        while(bonusplayer == p1) {
-                            bonusplayer = serverplayer.get(r.nextInt(serverplayer.size()));
-                        }
                         Bukkit.getServer().broadcastMessage(plugin.prefix + "§e§l"+p2.getName()+"§fと§e"+bonusplayer.getName()+"§fは追加ボーナスを受け取った！");
                         vault.deposit(p2.getUniqueId(), plugin.betmoney *= 2);
                         vault.deposit(p2.getUniqueId(),plugin.specialbonus / 2);
                         vault.deposit(serverplayer.get(r.nextInt(serverplayer.size())).getUniqueId(), plugin.specialbonus / 2);
                         plugin.specialbonus = 0;
+                        config.reload();
                         plugin.fevertime = false;
                         plugin.reset();
                         return;
