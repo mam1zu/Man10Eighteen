@@ -7,10 +7,12 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.SkullMeta;
-import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Random;
 
 
 public class EighteenBattleManager {
@@ -20,9 +22,6 @@ public class EighteenBattleManager {
     Player p1;
     Player p2;
 
-    ItemStack roundwatch = new ItemStack(Material.WATCH,1);
-    ItemStack p1Skull = new ItemStack(Material.SKULL_ITEM,1, (short) 3);
-    ItemStack p2Skull = new ItemStack(Material.SKULL_ITEM, 1, (short) 3);
     public EighteenBattleManager(Man10Eighteen plugin) {
         this.plugin = plugin;
         this.vault = plugin.vault;
