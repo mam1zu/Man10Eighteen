@@ -119,12 +119,14 @@ public class EighteenBattleManager {
         plugin.reset();
     }
     void winp1() {
+        p1.closeInventory();
         Bukkit.getServer().broadcastMessage(plugin.prefix + "§e§l"+p2.getName()+"§fが抜けたため、§e"+p1.getName()+"§fの勝ちとなりました");
         vault.deposit(p1.getUniqueId(), plugin.betmoney * 2 - plugin.betmoney * plugin.bonuscompetitive);
         plugin.specialbonus += plugin.betmoney * plugin.bonuscompetitive;
         config.reload();
     }
     void winp2() {
+        p2.closeInventory();
         Bukkit.getServer().broadcastMessage(plugin.prefix + "§e§l"+p1.getName()+"§fが抜けたため、§e"+p2.getName()+"§fの勝ちとなりました");
         vault.deposit(p2.getUniqueId(), plugin.betmoney * 2 - plugin.betmoney * plugin.bonuscompetitive);
         plugin.specialbonus += plugin.betmoney * plugin.bonuscompetitive;
