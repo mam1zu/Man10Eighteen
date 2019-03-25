@@ -262,6 +262,7 @@ public class EighteenBattleManager {
                     vault.deposit(p1.getUniqueId(), plugin.betmoney);
                     vault.deposit(p2.getUniqueId(), plugin.betmoney);
                     plugin.fevertime = false;
+                    plugin.reset();
                     return;
                 }
                 if(plugin.p1score > plugin.p2score) {
