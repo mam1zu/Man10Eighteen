@@ -118,12 +118,12 @@ public class EighteenBattleManager {
         plugin.reset();
     }
     void winp1() {
-        Bukkit.getServer().broadcastMessage(plugin.prefix + "§e§l"+p1.getName()+"§fが抜けたため、§e"+p2.getName()+"§fの勝ちとなりました");
-        vault.deposit(p2.getUniqueId(), plugin.betmoney *= 2);
-    }
-    void winp2() {
         Bukkit.getServer().broadcastMessage(plugin.prefix + "§e§l"+p2.getName()+"§fが抜けたため、§e"+p1.getName()+"§fの勝ちとなりました");
         vault.deposit(p1.getUniqueId(), plugin.betmoney *= 2);
+    }
+    void winp2() {
+        Bukkit.getServer().broadcastMessage(plugin.prefix + "§e§l"+p1.getName()+"§fが抜けたため、§e"+p2.getName()+"§fの勝ちとなりました");
+        vault.deposit(p2.getUniqueId(), plugin.betmoney *= 2);
     }
     void judge() {
         int result = rpsjudge();
@@ -265,7 +265,11 @@ public class EighteenBattleManager {
                             serverplayer.add(player);
                         }
                         Random r = new Random();
-                        Bukkit.getServer().broadcastMessage(plugin.prefix + "§e§l"+p1.getName()+"§fと§e"+serverplayer.get(r.nextInt(serverplayer.size())).getName()+"§fは追加ボーナスを受け取った！");
+                        Player bonusplayer = serverplayer.get(r.nextInt(serverplayer.size()));
+                        while(bonusplayer == p1) {
+                            bonusplayer = serverplayer.get(r.nextInt(serverplayer.size()));
+                        }
+                        Bukkit.getServer().broadcastMessage(plugin.prefix + "§e§l"+p1.getName()+"§fと§e"+bonusplayer.getName()+"§fは追加ボーナスを受け取った！");
                         vault.deposit(p1.getUniqueId(), plugin.betmoney *= 2);
                         vault.deposit(p1.getUniqueId(),plugin.specialbonus / 2);
                         vault.deposit(serverplayer.get(r.nextInt(serverplayer.size())).getUniqueId(), plugin.specialbonus / 2);
@@ -285,7 +289,11 @@ public class EighteenBattleManager {
                             serverplayer.add(player);
                         }
                         Random r = new Random();
-                        Bukkit.getServer().broadcastMessage(plugin.prefix + "§e§l"+p2.getName()+"§fと§e"+serverplayer.get(r.nextInt(serverplayer.size())).getName()+"§fは追加ボーナスを受け取った！");
+                        Player bonusplayer = serverplayer.get(r.nextInt(serverplayer.size()));
+                        while(bonusplayer == p1) {
+                            bonusplayer = serverplayer.get(r.nextInt(serverplayer.size()));
+                        }
+                        Bukkit.getServer().broadcastMessage(plugin.prefix + "§e§l"+p2.getName()+"§fと§e"+bonusplayer.getName()+"§fは追加ボーナスを受け取った！");
                         vault.deposit(p2.getUniqueId(), plugin.betmoney *= 2);
                         vault.deposit(p2.getUniqueId(),plugin.specialbonus / 2);
                         vault.deposit(serverplayer.get(r.nextInt(serverplayer.size())).getUniqueId(), plugin.specialbonus / 2);
