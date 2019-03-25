@@ -24,7 +24,6 @@ public class EighteenConfigManager {
         plugin.reloadConfig();
     }
     public void save() {
-        plugin.getConfig().set("pluginstatus", plugin.plstatus);
-        plugin.getConfig().set("specialbonusstock",plugin.specialbonus);
+        plugin.saveConfig();
     }
 }
