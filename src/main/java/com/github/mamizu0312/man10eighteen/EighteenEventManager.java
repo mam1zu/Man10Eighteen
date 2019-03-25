@@ -5,12 +5,42 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryCloseEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 
 public class EighteenEventManager implements Listener {
     Man10Eighteen plugin;
     EighteenBattleManager battle;
     public EighteenEventManager(Man10Eighteen plugin) {
         this.plugin = plugin;
+        battle = plugin.battle;
+    }
+    @EventHandler
+    public void onPlayerQuitEvent(PlayerQuitEvent e) {
+        Player p = e.getPlayer();
+        if(p == null) {
+            return;
+        }
+        if(plugin.onGame.contains(p.getUniqueId())) {
+            if(plugin.onGame.get(0) == p.getUniqueId()) {
+                battle.winp2();
+                plugin.reset();
+            }
+            if(plugin.onGame.get(1) == p.getUniqueId()) {
+                battle.winp1();
+                plugin.reset();
+            }
+        }
+    }
+    @EventHandler
+    public void onInventoryCloseEvent(InventoryCloseEvent e) {
+        Player p = (Player)e.getPlayer();
+        if(p == null) {
+            return;
+        }
+        if(plugin.onGame.contains(p.getUniqueId())) {
+            p.sendMessage(plugin.prefix + "§f§l誤って閉じてしまった場合は、§e/mer reopen§fで再度開くことができます");
+        }
     }
     @EventHandler
     public void onInventoryClickEvent(InventoryClickEvent e) {

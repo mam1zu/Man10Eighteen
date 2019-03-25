@@ -65,5 +65,7 @@ public final class Man10Eighteen extends JavaPlugin {
         p2finger = 18;
         betmoney = 0;
         this.battle = new EighteenBattleManager(this);
+        prewait = false;
+        fevertime = false;
     }
 }

@@ -114,6 +114,14 @@ public class EighteenBattleManager {
         p2.sendMessage(plugin.prefix + "§c§l試合がキャンセルされました。賭け金は返金されます");
         plugin.reset();
     }
+    void winp1() {
+        Bukkit.getServer().broadcastMessage(plugin.prefix + "§e§l"+p1.getName()+"§fが抜けたため、§e"+p2.getName()+"§fの勝ちとなりました");
+        vault.deposit(p2.getUniqueId(), plugin.betmoney *= 2);
+    }
+    void winp2() {
+        Bukkit.getServer().broadcastMessage(plugin.prefix + "§e§l"+p2.getName()+"§fが抜けたため、§e"+p1.getName()+"§fの勝ちとなりました");
+        vault.deposit(p1.getUniqueId(), plugin.betmoney *= 2);
+    }
     void judge() {
         int result = rpsjudge();
         if(result == 0) {
