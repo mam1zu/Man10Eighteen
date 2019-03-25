@@ -17,7 +17,7 @@ public class EighteenCommandManager implements CommandExecutor {
     public EighteenCommandManager(Man10Eighteen plugin) {
         this.plugin = plugin;
         config = new EighteenConfigManager(plugin);
-        vault = plugin.vault;
+        vault = new VaultManager(plugin);
     }
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
