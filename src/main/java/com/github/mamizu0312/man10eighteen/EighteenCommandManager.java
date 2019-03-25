@@ -25,14 +25,13 @@ public class EighteenCommandManager implements CommandExecutor {
             return true;
         }
         Player p = (Player)sender;
+        if(!p.hasPermission("mer.play")) {
+            p.sendMessage(plugin.prefix + "§4§l権限がありません");
+        }
         if(args.length == 0) {
             HelpCommand(p);
         }
         if(args.length == 1) {
-            if (!p.hasPermission("mer.play")) {
-                p.sendMessage(plugin.prefix + "§4§l権限がありません");
-                return true;
-            }
             if (args[0].equalsIgnoreCase("on")) {
                 if(!p.hasPermission("mer.staff")) {
                     p.sendMessage(plugin.prefix + "§4§l権限がありません");
