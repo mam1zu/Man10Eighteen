@@ -39,10 +39,11 @@ public class EighteenEventManager implements Listener {
             return;
         }
         if(plugin.onGame.contains(p.getUniqueId())) {
-            if(plugin.onGame.get(0) == p.getUniqueId() && !plugin.p1canchooserps) {
+            if(plugin.onGame.get(0) == p.getUniqueId() && plugin.p1canchooserps) {
                 p.sendMessage(plugin.prefix + "§f§l誤って閉じてしまった場合は、§e§l/mer reopen§f§lで再度開くことができます");
+                return;
             }
-            if(plugin.onGame.get(1) == p.getUniqueId() && !plugin.p2canchooserps) {
+            if(plugin.onGame.get(1) == p.getUniqueId() && plugin.p2canchooserps) {
                 p.sendMessage(plugin.prefix + "§f§l誤って閉じてしまった場合は、§e§l/mer reopen§f§lで再度開くことができます");
             }
         }
