@@ -34,21 +34,20 @@ public class EighteenEventManager implements Listener {
     }
     @EventHandler
     public void onInventoryCloseEvent(InventoryCloseEvent e) {
+        if(plugin.onGame.isEmpty()) {
+            return;
+        }
         Player p = (Player)e.getPlayer();
         if(p == null) {
             return;
         }
         if(plugin.onGame.contains(p.getUniqueId())) {
-            if(plugin.onGame.get(0) == p.getUniqueId()) {
-                if (plugin.p1canchooserps) {
-                    p.sendMessage(plugin.prefix + "§f§l誤って閉じてしまった場合は、§e§l/mer reopen§f§lで再度開くことができます");
+            if(plugin.onGame.get(0) == p.getUniqueId() && plugin.p1canchooserps) {
+                p.sendMessage(plugin.prefix + "§f§l誤って閉じてしまった場合は、§e§l/mer reopen§f§lで再度開くことができます");
                     return;
-                }
             }
-            if (plugin.onGame.get(1) == p.getUniqueId()) {
-                if (plugin.p2canchooserps) {
-                    p.sendMessage(plugin.prefix + "§f§l誤って閉じてしまった場合は、§e§l/mer reopen§f§lで再度開くことができます");
-                }
+            if (plugin.onGame.get(1) == p.getUniqueId() && plugin.p2canchooserps) {
+                p.sendMessage(plugin.prefix + "§f§l誤って閉じてしまった場合は、§e§l/mer reopen§f§lで再度開くことができます");
             }
         }
     }
@@ -77,8 +76,8 @@ public class EighteenEventManager implements Listener {
                       }
                       plugin.p1putoutfinger = plugin.scissorfinger;
                       plugin.p1finger -= 2;
-                      p.closeInventory();
                       plugin.p1canchooserps = false;
+                      p.closeInventory();
                       }
                     if (e.getCurrentItem().getType() == Material.PAPER) {
                         if(plugin.p1finger < plugin.paperfinger) {
@@ -87,8 +86,8 @@ public class EighteenEventManager implements Listener {
                         }
                         plugin.p1putoutfinger = plugin.paperfinger;
                         plugin.p1finger -= 5;
-                        p.closeInventory();
                         plugin.p1canchooserps = false;
+                        p.closeInventory();
                     }
                     if(!plugin.p1canchooserps && !plugin.p2canchooserps) {
                         battle.judge();
@@ -102,8 +101,8 @@ public class EighteenEventManager implements Listener {
                     }
                     if(e.getCurrentItem().getType() == Material.STONE) {
                         plugin.p2putoutfinger = plugin.rockfinger;
-                        p.closeInventory();
                         plugin.p2canchooserps = false;
+                        p.closeInventory();
                     }
                     if(e.getCurrentItem().getType() == Material.SHEARS) {
                         if(plugin.p2finger < plugin.scissorfinger) {
@@ -112,8 +111,8 @@ public class EighteenEventManager implements Listener {
                         }
                         plugin.p2putoutfinger = plugin.scissorfinger;
                         plugin.p2finger -= 2;
-                        p.closeInventory();
                         plugin.p2canchooserps = false;
+                        p.closeInventory();
                     }
                     if(e.getCurrentItem().getType() == Material.PAPER) {
                         if(plugin.p2finger < plugin.paperfinger) {
@@ -122,8 +121,8 @@ public class EighteenEventManager implements Listener {
                         }
                         plugin.p2putoutfinger = plugin.paperfinger;
                         plugin.p2finger -= 5;
-                        p.closeInventory();
                         plugin.p2canchooserps = false;
+                        p.closeInventory();
                     }
                     if(!plugin.p1canchooserps && !plugin.p2canchooserps) {
                         battle.judge();
