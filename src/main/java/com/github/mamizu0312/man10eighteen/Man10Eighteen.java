@@ -34,6 +34,7 @@ public final class Man10Eighteen extends JavaPlugin {
     double betmoney = 0;
     boolean fevertime = false;
     double specialbonus;
+    double bonuscompetitive = 0.05;
     int chance;
     //n分の1の確立になる
 

@@ -119,11 +119,15 @@ public class EighteenBattleManager {
     }
     void winp1() {
         Bukkit.getServer().broadcastMessage(plugin.prefix + "§e§l"+p2.getName()+"§fが抜けたため、§e"+p1.getName()+"§fの勝ちとなりました");
-        vault.deposit(p1.getUniqueId(), plugin.betmoney *= 2);
+        vault.deposit(p1.getUniqueId(), plugin.betmoney * 2 - plugin.betmoney * plugin.bonuscompetitive);
+        plugin.specialbonus += plugin.betmoney * plugin.bonuscompetitive;
+        config.reload();
     }
     void winp2() {
         Bukkit.getServer().broadcastMessage(plugin.prefix + "§e§l"+p1.getName()+"§fが抜けたため、§e"+p2.getName()+"§fの勝ちとなりました");
-        vault.deposit(p2.getUniqueId(), plugin.betmoney *= 2);
+        vault.deposit(p2.getUniqueId(), plugin.betmoney * 2 - plugin.betmoney * plugin.bonuscompetitive);
+        plugin.specialbonus += plugin.betmoney * plugin.bonuscompetitive;
+        config.reload();
     }
     void judge() {
         int result = rpsjudge();
@@ -278,8 +282,8 @@ public class EighteenBattleManager {
                         plugin.reset();
                         return;
                     }
-                    plugin.specialbonus += plugin.betmoney * 0.05;
-                    vault.deposit(p1.getUniqueId(), plugin.betmoney * 2 - plugin.betmoney * 0.05);
+                    plugin.specialbonus += plugin.betmoney * plugin.bonuscompetitive;
+                    vault.deposit(p1.getUniqueId(), plugin.betmoney * 2 - plugin.betmoney * plugin.bonuscompetitive);
                     plugin.reset();
                 } else {
                     Bukkit.getServer().broadcastMessage(plugin.prefix + "§e§l"+p2.getName()+"§fの勝利です！試合を終了します");
@@ -302,9 +306,9 @@ public class EighteenBattleManager {
                         plugin.reset();
                         return;
                     }
-                    plugin.specialbonus += plugin.betmoney * 0.05;
+                    plugin.specialbonus += plugin.betmoney * plugin.bonuscompetitive;
                     config.reload();
-                    vault.deposit(p2.getUniqueId(), plugin.betmoney * 2 - plugin.betmoney * 0.05);
+                    vault.deposit(p2.getUniqueId(), plugin.betmoney * 2 - plugin.betmoney * plugin.bonuscompetitive);
                     plugin.reset();
                 }
             }
