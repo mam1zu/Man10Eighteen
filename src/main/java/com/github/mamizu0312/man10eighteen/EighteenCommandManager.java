@@ -136,6 +136,10 @@ public class EighteenCommandManager implements CommandExecutor {
                 plugin.p2canchooserps = true;
             }
             if(args[0].equalsIgnoreCase("reopen")) {
+                if(plugin.onGame.isEmpty()) {
+                    p.sendMessage(plugin.prefix + "§c§lあなたは試合に参加していません");
+                    return true;
+                }
                 if(plugin.onGame.get(0) == p.getUniqueId()) {
                     p.openInventory(plugin.p1inv);
                     return true;
@@ -144,8 +148,6 @@ public class EighteenCommandManager implements CommandExecutor {
                     p.openInventory(plugin.p2inv);
                     return true;
                 }
-                p.sendMessage(plugin.prefix + "§c§lあなたは試合に参加していません");
-                return true;
             }
             if(args[0].equalsIgnoreCase("stop")) {
                 if(!p.hasPermission("mer.staff")) {
