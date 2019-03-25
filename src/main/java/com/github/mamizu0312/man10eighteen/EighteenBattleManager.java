@@ -7,6 +7,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.SkullMeta;
+import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.*;
@@ -31,7 +32,7 @@ public class EighteenBattleManager {
         this.p1 = p1;
         this.p2 = p2;
         this.vault = new VaultManager(plugin);
-        this.config = plugin.config;
+        this.config = new EighteenConfigManager(plugin);
 
     }
     public void game() {

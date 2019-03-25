@@ -16,7 +16,7 @@ public class EighteenCommandManager implements CommandExecutor {
     VaultManager vault;
     public EighteenCommandManager(Man10Eighteen plugin) {
         this.plugin = plugin;
-        config = plugin.config;
+        config = new EighteenConfigManager(plugin);
         vault = new VaultManager(plugin);
     }
     @Override

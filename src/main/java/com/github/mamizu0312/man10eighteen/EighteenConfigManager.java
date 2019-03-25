@@ -9,7 +9,7 @@ public class EighteenConfigManager {
     public void load() {
         plugin.prefix = plugin.getConfig().getString("prefix");
         plugin.plstatus = plugin.getConfig().getBoolean("pluginstatus");
-        plugin.specialbonus = plugin.getConfig().getInt("specialbonusstock");
+        plugin.specialbonus = plugin.getConfig().getDouble("specialbonusstock");
         plugin.chance = plugin.getConfig().getInt("chance");
     }
     public void setPluginStatus(boolean plstatus) {
