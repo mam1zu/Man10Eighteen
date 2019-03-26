@@ -11,6 +11,13 @@ public class EighteenConfigManager {
         plugin.plstatus = plugin.getConfig().getBoolean("pluginstatus");
         plugin.specialbonus = plugin.getConfig().getDouble("specialbonusstock");
         plugin.chance = plugin.getConfig().getInt("chance");
+        plugin.minimumbet = plugin.getConfig().getDouble("minimumbet");
+        plugin.maximumbet = plugin.getConfig().getDouble("maximumbet");
+        plugin.HOST = plugin.getConfig().getString("mysql.host");
+        plugin.DB = plugin.getConfig().getString("mysql.db");
+        plugin.USER = plugin.getConfig().getString("mysql.user");
+        plugin.PASS = plugin.getConfig().getString("mysql.pass");
+        plugin.PORT = plugin.getConfig().getString("mysql.port");
     }
     public void setPluginStatus(boolean plstatus) {
         plugin.plstatus = plstatus;

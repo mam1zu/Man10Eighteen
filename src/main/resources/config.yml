@@ -1,6 +1,14 @@
-prefix: "§l[§dM§fa§an§f10§6Eighteen§f]§r"
+prefix: "§l[§d§lM§f§la§a§ln§f§l10§6§lEighteen§f§l]§r"
 pluginstatus: false
 #specialbonusのストックです。
 specialbonusstock: 0
 #chanceはfevertimeが起こる確率です。 n分の1の確立になります。
 chance: 3
+minimumbet: 10000000.0
+maximumbet: 1000000000.0
+mysql:
+  host: localhost
+  db: Man10Eighteen
+  user: root
+  pass: pass
+  port: 3306

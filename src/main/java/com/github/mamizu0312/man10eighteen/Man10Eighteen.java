@@ -29,14 +29,18 @@ public final class Man10Eighteen extends JavaPlugin {
     int p1finger = 18;
     int p2finger = 18;
     //最小掛け金1000万円、最大掛け金10億円
-    double minimumbet = 10000000;
-    double maximumbet = 1000000000;
+    double minimumbet;
+    double maximumbet;
     double betmoney = 0;
     boolean fevertime = false;
     double specialbonus;
     double bonuscompetitive = 0.05;
     int chance;
-    //n分の1の確立になる
+    String HOST;
+    String USER;
+    String PASS;
+    String PORT;
+    String DB;
 
     @Override
     public void onEnable() {
@@ -53,7 +57,6 @@ public final class Man10Eighteen extends JavaPlugin {
     public void onDisable() {
         config.save();
     }
-    //注意:return直前に実行すること
 
     public void reset() {
         onGame.clear();

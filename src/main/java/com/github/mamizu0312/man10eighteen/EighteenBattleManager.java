@@ -19,6 +19,7 @@ public class EighteenBattleManager {
     Man10Eighteen plugin;
     EighteenConfigManager config;
     VaultManager vault;
+    EighteenMySQLManager mysql;
     Player p1;
     Player p2;
 
@@ -32,7 +33,7 @@ public class EighteenBattleManager {
         this.p2 = p2;
         this.vault = new VaultManager(plugin);
         this.config = new EighteenConfigManager(plugin);
-
+        this.mysql = new EighteenMySQLManager(plugin, "Man10Eighteen");
     }
     public void game() {
         plugin.p1inv = Bukkit.createInventory(null,27,plugin.prefix);
@@ -121,6 +122,7 @@ public class EighteenBattleManager {
         p1.closeInventory();
         Bukkit.getServer().broadcastMessage(plugin.prefix + "§e§l"+p2.getName()+"§fが抜けたため、§e"+p1.getName()+"§fの勝ちとなりました");
         vault.deposit(p1.getUniqueId(), plugin.betmoney * 2 - plugin.betmoney * plugin.bonuscompetitive);
+        mysql.senddepositinfo(p1,plugin.betmoney * 2 - plugin.betmoney * plugin.bonuscompetitive);
         plugin.specialbonus += plugin.betmoney * plugin.bonuscompetitive;
         config.reload();
     }
@@ -128,6 +130,7 @@ public class EighteenBattleManager {
         p2.closeInventory();
         Bukkit.getServer().broadcastMessage(plugin.prefix + "§e§l"+p1.getName()+"§fが抜けたため、§e"+p2.getName()+"§fの勝ちとなりました");
         vault.deposit(p2.getUniqueId(), plugin.betmoney * 2 - plugin.betmoney * plugin.bonuscompetitive);
+        mysql.senddepositinfo(p2,plugin.betmoney * 2 - plugin.betmoney * plugin.bonuscompetitive);
         plugin.specialbonus += plugin.betmoney * plugin.bonuscompetitive;
         config.reload();
     }
@@ -259,7 +262,9 @@ public class EighteenBattleManager {
                 if(plugin.p1score == plugin.p2score) {
                     Bukkit.getServer().broadcastMessage(plugin.prefix + "§f§l引き分けでした！試合を終了します");
                     vault.deposit(p1.getUniqueId(), plugin.betmoney);
+                    mysql.senddepositinfo(p1,plugin.betmoney);
                     vault.deposit(p2.getUniqueId(), plugin.betmoney);
+                    mysql.senddepositinfo(p2,plugin.betmoney);
                     plugin.fevertime = false;
                     plugin.reset();
                     return;
@@ -275,9 +280,12 @@ public class EighteenBattleManager {
                         Player bonusplayer = serverplayer.get(r.nextInt(serverplayer.size()));
                         serverplayer.remove(p1);
                         Bukkit.getServer().broadcastMessage(plugin.prefix + "§e§l"+p1.getName()+"§fと§e"+bonusplayer.getName()+"§fは追加ボーナスを受け取った！");
-                        vault.deposit(p1.getUniqueId(), plugin.betmoney *= 2);
+                        vault.deposit(p1.getUniqueId(), plugin.betmoney * 2);
+                        mysql.senddepositinfo(p1,plugin.betmoney * 2);
                         vault.deposit(p1.getUniqueId(),plugin.specialbonus / 2);
-                        vault.deposit(serverplayer.get(r.nextInt(serverplayer.size())).getUniqueId(), plugin.specialbonus / 2);
+                        mysql.senddepositinfo(p1,plugin.specialbonus / 2);
+                        vault.deposit(bonusplayer.getUniqueId(), plugin.specialbonus / 2);
+                        mysql.senddepositinfo(bonusplayer,plugin.specialbonus / 2);
                         plugin.specialbonus = 0;
                         config.reload();
                         plugin.fevertime = false;
@@ -286,6 +294,7 @@ public class EighteenBattleManager {
                     }
                     plugin.specialbonus += plugin.betmoney * plugin.bonuscompetitive;
                     vault.deposit(p1.getUniqueId(), plugin.betmoney * 2 - plugin.betmoney * plugin.bonuscompetitive);
+                    mysql.senddepositinfo(p1,plugin.betmoney * 2 - plugin.betmoney * plugin.bonuscompetitive);
                     plugin.reset();
                 } else {
                     Bukkit.getServer().broadcastMessage(plugin.prefix + "§e§l"+p2.getName()+"§fの勝利です！試合を終了します");
@@ -298,9 +307,13 @@ public class EighteenBattleManager {
                         Random r = new Random();
                         Player bonusplayer = serverplayer.get(r.nextInt(serverplayer.size()));
                         Bukkit.getServer().broadcastMessage(plugin.prefix + "§e§l"+p2.getName()+"§fと§e"+bonusplayer.getName()+"§fは追加ボーナスを受け取った！");
-                        vault.deposit(p2.getUniqueId(), plugin.betmoney *= 2);
+                        vault.deposit(p2.getUniqueId(), plugin.betmoney * 2);
+                        mysql.senddepositinfo(p2,plugin.betmoney * 2);
                         vault.deposit(p2.getUniqueId(),plugin.specialbonus / 2);
-                        vault.deposit(serverplayer.get(r.nextInt(serverplayer.size())).getUniqueId(), plugin.specialbonus / 2);
+                        mysql.senddepositinfo(p2,plugin.specialbonus);
+                        vault.deposit(bonusplayer.getUniqueId(), plugin.specialbonus / 2);
+                        mysql.senddepositinfo(bonusplayer,plugin.specialbonus / 2);
+
                         plugin.specialbonus = 0;
                         config.reload();
                         plugin.fevertime = false;
@@ -310,6 +323,7 @@ public class EighteenBattleManager {
                     plugin.specialbonus += plugin.betmoney * plugin.bonuscompetitive;
                     config.reload();
                     vault.deposit(p2.getUniqueId(), plugin.betmoney * 2 - plugin.betmoney * plugin.bonuscompetitive);
+                    mysql.senddepositinfo(p2,plugin.betmoney * 2 - plugin.betmoney * plugin.bonuscompetitive);
                     plugin.reset();
                 }
             }
