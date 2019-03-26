@@ -32,14 +32,17 @@ public class EighteenCommandManager implements CommandExecutor {
         Player p = (Player)sender;
         if(!p.hasPermission("mer.play")) {
             p.sendMessage(plugin.prefix + "§4§l権限がありません");
+            return true;
         }
         if(args.length == 0) {
             HelpCommand(p);
+            return true;
         }
         if(args.length == 1) {
             if (args[0].equalsIgnoreCase("on")) {
                 if(!p.hasPermission("mer.staff")) {
                     p.sendMessage(plugin.prefix + "§4§l権限がありません");
+                    return true;
                 }
                 if (!plugin.plstatus) {
                     Bukkit.getServer().broadcastMessage(plugin.prefix + "§c§lプラグインを起動しています...");
@@ -54,6 +57,7 @@ public class EighteenCommandManager implements CommandExecutor {
             if (args[0].equalsIgnoreCase("off")) {
                 if(!p.hasPermission("mer.staff")) {
                     p.sendMessage(plugin.prefix + "§4§l権限がありません");
+                    return true;
                 }
                 if (plugin.plstatus) {
                     if (!plugin.onGame.isEmpty()) {
@@ -224,7 +228,10 @@ public class EighteenCommandManager implements CommandExecutor {
                     p.sendMessage(plugin.prefix + "§c§l値は1以上にしてください");
                     return true;
                 }
-                p.sendMessage(plugin.prefix + "§c§lchanceを変更しました。/mer reloadで適用");
+                plugin.chance = prechance;
+                prechance = 0;
+                p.sendMessage(plugin.prefix + "§c§lchanceを変更しました");
+                config.reload();
             }
             if (args[1].equalsIgnoreCase("maximumbet")) {
                 try {
@@ -234,7 +241,9 @@ public class EighteenCommandManager implements CommandExecutor {
                     return true;
                 }
                 plugin.maximumbet = premaximumbet;
-                p.sendMessage(plugin.prefix + "§c§lmaximumbetを変更しました。/mer reloadで適用");
+                premaximumbet = 0;
+                p.sendMessage(plugin.prefix + "§c§lmaximumbetを変更しました");
+                config.reload();
                 return true;
             }
             if(args[1].equalsIgnoreCase("minimumbet")) {
@@ -245,7 +254,9 @@ public class EighteenCommandManager implements CommandExecutor {
                     return true;
                 }
                 plugin.minimumbet = preminimumbet;
-                p.sendMessage(plugin.prefix + "§c§lminimumbetを変更しました。/mer reloadで適用");
+                preminimumbet = 0;
+                p.sendMessage(plugin.prefix + "§c§lminimumbetを変更しました");
+                config.reload();
                 return true;
             }
         }
@@ -282,6 +293,7 @@ public class EighteenCommandManager implements CommandExecutor {
             p.sendMessage("§c§l/mer changeconfig §f:configの値を変更します");
             p.sendMessage("§c§l(注意・設定を反映するには/mer reloadを実行すること");
             p.sendMessage("§c§lDeveloped by Mamizu0312");
+            return;
         }
         p.sendMessage("----------"+plugin.prefix+"----------");
         p.sendMessage("§e§l/mer help§f: このページを開きます");
