@@ -114,8 +114,9 @@ public class EighteenBattleManager {
         p2.closeInventory();
         vault.deposit(p1.getUniqueId(), plugin.betmoney);
         vault.deposit(p2.getUniqueId(), plugin.betmoney);
-        p1.sendMessage(plugin.prefix + "§c§l試合がキャンセルされました。賭け金は返金されます");
-        p2.sendMessage(plugin.prefix + "§c§l試合がキャンセルされました。賭け金は返金されます");
+        p1.sendMessage(plugin.prefix + "§c§l賭け金は返金されます");
+        p2.sendMessage(plugin.prefix + "§c§l賭け金は返金されます");
+        Bukkit.getServer().broadcastMessage(plugin.prefix + "§c§l試合がキャンセルされました。");
         plugin.reset();
     }
     void winp1() {

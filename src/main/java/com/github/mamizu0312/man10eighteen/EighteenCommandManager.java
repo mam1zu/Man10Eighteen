@@ -66,6 +66,7 @@ public class EighteenCommandManager implements CommandExecutor {
                         if(plugin.prewait) {
                             p.sendMessage(plugin.prefix + "§c§l試合がキャンセルされました。賭け金は返金されます");
                             vault.deposit(p.getUniqueId(), plugin.betmoney);
+                            mysql.senddepositinfo(p,plugin.betmoney);
                             plugin.onGame.clear();
                             Bukkit.getServer().broadcastMessage(plugin.prefix + "§c§lプラグインを停止しました。");
                             return true;
@@ -88,7 +89,7 @@ public class EighteenCommandManager implements CommandExecutor {
                     p.sendMessage(plugin.prefix + "§4§l権限がありません");
                     return true;
                 }
-                config.reload();
+                plugin.reloadConfig();
                 p.sendMessage(plugin.prefix + "§e§lconfigをリロードしました。");
                 return true;
             }
@@ -169,8 +170,9 @@ public class EighteenCommandManager implements CommandExecutor {
                 }
                 if(plugin.prewait) {
                     Bukkit.getServer().broadcastMessage(plugin.prefix + "§4§l試合がキャンセルされました");
-                    p.sendMessage(plugin.prefix + "§c§l試合がキャンセルされました。賭け金は返金されます");
+                    p.sendMessage(plugin.prefix + "§c§l賭け金は返金されます");
                     vault.deposit(p.getUniqueId(), plugin.betmoney);
+                    mysql.senddepositinfo(p,plugin.betmoney);
                     plugin.onGame.clear();
                     return true;
                 }
@@ -208,7 +210,7 @@ public class EighteenCommandManager implements CommandExecutor {
             }
             vault.withdraw(p.getUniqueId(), plugin.betmoney);
             mysql.sendwithdrawinfo(p,plugin.betmoney);
-            getServer().broadcastMessage(plugin.prefix + "§e§l"+p.getName()+"§fさんが§e"+moneyformat((int) plugin.betmoney)+"§fで試合を開きました！ §a/mer join§fで参加！");
+            getServer().broadcastMessage(plugin.prefix + "§e§l"+p.getName()+"§fさんが§e"+moneyformat(plugin.betmoney)+"§fで試合を開きました！ §a/mer join§fで参加！");
             plugin.prewait = true;
             plugin.onGame.add(p.getUniqueId());
         }
@@ -228,35 +230,38 @@ public class EighteenCommandManager implements CommandExecutor {
                     p.sendMessage(plugin.prefix + "§c§l値は1以上にしてください");
                     return true;
                 }
-                plugin.chance = prechance;
+                config.setchance(prechance);
                 prechance = 0;
                 p.sendMessage(plugin.prefix + "§c§lchanceを変更しました");
-                config.reload();
+                plugin.saveConfig();
+                plugin.reloadConfig();
             }
             if (args[1].equalsIgnoreCase("maximumbet")) {
                 try {
-                    premaximumbet = Integer.parseInt(args[2]);
+                    premaximumbet = Double.parseDouble(args[2]);
                 } catch (NumberFormatException e) {
                     p.sendMessage(plugin.prefix + "§c§l値が不正です");
                     return true;
                 }
-                plugin.maximumbet = premaximumbet;
+                config.setmaximumbet(premaximumbet);
                 premaximumbet = 0;
                 p.sendMessage(plugin.prefix + "§c§lmaximumbetを変更しました");
-                config.reload();
+                plugin.saveConfig();
+                plugin.reloadConfig();
                 return true;
             }
             if(args[1].equalsIgnoreCase("minimumbet")) {
                 try {
-                    preminimumbet = Integer.parseInt(args[2]);
+                    preminimumbet = Double.parseDouble(args[2]);
                 } catch (NumberFormatException e) {
                     p.sendMessage(plugin.prefix + "§c§l値が不正です");
                     return true;
                 }
-                plugin.minimumbet = preminimumbet;
+                config.setminimumbet(preminimumbet);
                 preminimumbet = 0;
                 p.sendMessage(plugin.prefix + "§c§lminimumbetを変更しました");
-                config.reload();
+                plugin.saveConfig();
+                plugin.reloadConfig();
                 return true;
             }
         }
@@ -278,10 +283,10 @@ public class EighteenCommandManager implements CommandExecutor {
             p.sendMessage("§c§l/mer on  §f: プラグインを起動します");
             p.sendMessage("§c§l/mer off §f: プラグインを停止します");
             p.sendMessage("§c§l/mer stop §f: 試合をストップします");
-            p.sendMessage("§c§lDeveloped by Mamizu0312");
+            p.sendMessage("§3§lDeveloped by Mamizu0312");
             return;
         }
-        if(p.hasPermission("mer.op")) {
+        if(p.hasPermission("mer.op") && p.hasPermission("mer.staff")) {
             p.sendMessage("----------"+plugin.prefix+"----------");
             p.sendMessage("§e§l/mer help§f: このページを開きます");
             p.sendMessage("§e§l/mer game§f: 新しく試合を開きます");
@@ -292,7 +297,7 @@ public class EighteenCommandManager implements CommandExecutor {
             p.sendMessage("§c§l/mer stop §f: 試合をストップします");
             p.sendMessage("§c§l/mer changeconfig §f:configの値を変更します");
             p.sendMessage("§c§l(注意・設定を反映するには/mer reloadを実行すること");
-            p.sendMessage("§c§lDeveloped by Mamizu0312");
+            p.sendMessage("§3§lDeveloped by Mamizu0312");
             return;
         }
         p.sendMessage("----------"+plugin.prefix+"----------");
@@ -300,20 +305,64 @@ public class EighteenCommandManager implements CommandExecutor {
         p.sendMessage("§e§l/mer game§f: 新しく試合を開きます");
         p.sendMessage("§e§l/mer join§f: 試合に入ります");
         p.sendMessage("§e§l/mer reopen§f: メニューを再度開きます");
-        p.sendMessage("§c§lDeveloped by Mamizu0312");
+        p.sendMessage("§3§lDeveloped by Mamizu0312");
     }
-    String moneyformat(int money) {
-        if(money >= 1000000000) {
-            int under1000m = money - 1000000000;
-            return money / 100000000+"億"+under1000m+"万円";
+    String moneyformat(double money) {
+        String moneystring;
+        long premoney = (long) money;
+        try {
+            moneystring = Long.toString(premoney);
+        } catch(NumberFormatException e) {
+            return null;
         }
-        if(money >= 100000000) {
-            int under100m = money - 100000000;
-            return money / 100000000+"億"+under100m+"万円";
+        int moneylength = moneystring.length();
+        if(moneylength >= 12) {
+            String moneybil = moneystring.substring(0,4);
+            return moneybil + "億円";
         }
-        if(money >= 10000) {
-            return money / 10000 +"万円";
+        if(moneylength >= 11) {
+            String moneybil = moneystring.substring(0,3);
+            return moneybil + "億円";
         }
-        return money + "円";
+        if(moneylength >= 10) {
+            String moneybil = moneystring.substring(0, 2);
+            return moneybil + "億円";
+        }
+        if(moneylength >= 9) {
+            String moneybil = moneystring.substring(0,1);
+            return moneybil + "億円" ;
+        }
+        if(moneylength >= 8) {
+            String moneybil = moneystring.substring(0,4);
+            return moneybil + "万円";
+        }
+        if(moneylength >= 7) {
+            String moneybil = moneystring.substring(0,3);
+            return moneybil + "万円";
+        }
+        if(moneylength >= 6) {
+            String moneybil = moneystring.substring(0,1);
+            return moneybil + "万円";
+        }
+        if(moneylength >= 5) {
+            String moneybil = moneystring.substring(0,1);
+            return moneybil + "万円";
+        }
+        if(moneylength >= 4) {
+            String moneybil = moneystring.substring(0,4);
+            return moneybil + "円";
+        }
+        if(moneylength >= 3) {
+            String moneybil = moneystring.substring(0,3);
+            return moneybil + "円";
+        }
+        if(moneylength >= 2) {
+            String moneybil = moneystring.substring(0,2);
+            return moneybil + "円";
+        }
+        if(moneylength >= 1) {
+            return premoney + "円";
+        }
+        return null;
     }
 }

@@ -1,6 +1,8 @@
 package com.github.mamizu0312.man10eighteen;
 
 
+import java.util.HashMap;
+
 public class EighteenConfigManager {
     Man10Eighteen plugin;
     public EighteenConfigManager(Man10Eighteen plugin) {
@@ -35,5 +37,17 @@ public class EighteenConfigManager {
         plugin.getConfig().set("pluginstatus",plugin.plstatus);
         plugin.getConfig().set("specialbonusstock",plugin.specialbonus);
         plugin.saveConfig();
+    }
+    public void setmaximumbet(double money) {
+        plugin.maximumbet = money;
+        plugin.getConfig().set("maximumbet", money);
+    }
+    public void setminimumbet(double money) {
+        plugin.minimumbet = money;
+        plugin.getConfig().set("minimumbet",money);
+    }
+    public void setchance(int chance) {
+        plugin.chance = chance;
+        plugin.getConfig().set("chance",chance);
     }
 }

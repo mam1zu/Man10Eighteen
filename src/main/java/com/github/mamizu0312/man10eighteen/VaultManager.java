@@ -65,7 +65,7 @@ public class VaultManager {
         EconomyResponse resp = economy.withdrawPlayer(p,money);
         if(resp.transactionSuccess()){
             if(p.isOnline()) {
-                p.getPlayer().sendMessage(ChatColor.YELLOW + "$" + (int) money + "支払いました");
+                p.getPlayer().sendMessage(ChatColor.YELLOW + "$" + money + "支払いました");
             }
             return true;
         }
@@ -84,7 +84,7 @@ public class VaultManager {
         EconomyResponse resp = economy.depositPlayer(p,money);
         if(resp.transactionSuccess()){
             if(p.isOnline()){
-                p.getPlayer().sendMessage(ChatColor.YELLOW + "$"+(int)money+"受取りました");
+                p.getPlayer().sendMessage(ChatColor.YELLOW + "$"+money+"受取りました");
             }
             return true;
         }

@@ -38,18 +38,17 @@ public class EighteenMySQLManager {
         this.conName = name;
         this.connected = false;
         loadConfig();
-
-        this.connected = Connect(HOST, DB, USER, PASS,PORT);
+        this.connected = Connect(HOST, DB, USER, PASS, PORT);
 
         if(!this.connected) {
             plugin.getLogger().info("Unable to establish a MySQL connection.");
         }
 
-        execute("create table if not exists paymentinfo(" +
-                "taskid int auto_increment not null primary key," +
-                "playername varchar(40)"+
-                "puuid varchar(40)"+
-                "type varchar(40)"+
+        execute("create table if not exists paymentinfo (" +
+                "taskid int auto_increment primary key," +
+                "playername varchar(40),"+
+                "puuid varchar(40),"+
+                "type varchar(40),"+
                 "money double"+
                 ");");
     }
@@ -58,11 +57,11 @@ public class EighteenMySQLManager {
     //       設定ファイル読み込み
     /////////////////////////////////
     public void loadConfig(){
-        this.HOST = plugin.HOST;
-        this.DB = plugin.DB;
-        this.USER = plugin.USER;
-        this.PASS = plugin.PASS;
-        this.PORT = plugin.PORT;
+        this.HOST = plugin.getConfig().getString("mysql.host");
+        this.DB = plugin.getConfig().getString("mysql.db");
+        this.USER = plugin.getConfig().getString("mysql.user");
+        this.PASS = plugin.getConfig().getString("mysql.pass");
+        this.PORT = plugin.getConfig().getString("mysql.port");
     }
 
     public void commit(){
@@ -102,40 +101,6 @@ public class EighteenMySQLManager {
     }
 
     ////////////////////////////////
-    //     行数を数える
-    ////////////////////////////////
-    public int countRows(String table) {
-        int count = 0;
-        ResultSet set = this.query(String.format("SELECT * FROM %s", new Object[]{table}));
-
-        try {
-            while(set.next()) {
-                ++count;
-            }
-        } catch (SQLException var5) {
-            Bukkit.getLogger().log(Level.SEVERE, "Could not select all rows from table: " + table + ", error: " + var5.getErrorCode());
-        }
-
-        return count;
-    }
-    ////////////////////////////////
-    //     レコード数
-    ////////////////////////////////
-    public int count(String table) {
-        int count = 0;
-        ResultSet set = this.query(String.format("SELECT count(*) from %s", table));
-
-        try {
-            count = set.getInt("count(*)");
-
-        } catch (SQLException var5) {
-            Bukkit.getLogger().log(Level.SEVERE, "Could not select all rows from table: " + table + ", error: " + var5.getErrorCode());
-            return -1;
-        }
-
-        return count;
-    }
-    ////////////////////////////////
     //      実行
     ////////////////////////////////
     public boolean execute(String query) {
@@ -164,60 +129,25 @@ public class EighteenMySQLManager {
         return ret;
     }
 
-    ////////////////////////////////
-    //      クエリ
-    ////////////////////////////////
-    public ResultSet query(String query) {
-        this.MySQL = new  MySQLFunc(this.HOST, this.DB, this.USER, this.PASS,this.PORT);
-        this.con = this.MySQL.open();
-        ResultSet rs = null;
-        if(this.con == null){
-            Bukkit.getLogger().info("failed to open MYSQL");
-            return rs;
-        }
-
-        if (debugMode){
-            plugin.getLogger().info("[DEBUG] query:" + query);
-        }
-
-        try {
-            this.st = this.con.createStatement();
-            rs = this.st.executeQuery(query);
-        } catch (SQLException var4) {
-            this.plugin.getLogger().info("[" + this.conName + "] Error executing query: " + var4.getErrorCode());
-            this.plugin.getLogger().info(query);
-        }
-
-//        this.close();
-
-        return rs;
-    }
-
-
     public void close(){
-
         try {
             this.st.close();
             this.con.close();
             this.MySQL.close(this.con);
-
         } catch (SQLException var4) {
         }
-
     }
     public void senddepositinfo(Player p, double money) {
         Bukkit.getScheduler().runTaskAsynchronously(plugin, () ->  {
-            String sql = "INSERT INTO paymentinfo(playername,puuid,type,money) VALUES ('"+p.getName()+"','"+p.getUniqueId().toString()+"','deposit','"+money+"';";
+            String sql = "INSERT INTO paymentinfo(playername,puuid,type,money) VALUES ('"+p.getName()+"','"+p.getUniqueId().toString()+"','deposit','"+money+"');";
             execute(sql);
-            close();
                 }
         );
     }
     public void sendwithdrawinfo(Player p, double money) {
         Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
-            String sql = "INSERT INTO paymentinfo(playername,puuid,type,money) VALUES ('"+p.getName()+"','"+p.getUniqueId().toString()+"','withdraw','"+money+"';";
+            String sql = "INSERT INTO paymentinfo(playername,puuid,type,money) VALUES ('"+p.getName()+"','"+p.getUniqueId().toString()+"','withdraw','"+money+"');";
             execute(sql);
-            close();
         });
     }
 }
