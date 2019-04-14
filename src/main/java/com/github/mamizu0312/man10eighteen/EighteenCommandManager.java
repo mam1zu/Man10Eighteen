@@ -310,58 +310,28 @@ public class EighteenCommandManager implements CommandExecutor {
     String moneyformat(double money) {
         String moneystring;
         long premoney = (long) money;
+        String moneybil = null;
         try {
             moneystring = Long.toString(premoney);
         } catch(NumberFormatException e) {
             return null;
         }
         int moneylength = moneystring.length();
-        if(moneylength >= 12) {
-            String moneybil = moneystring.substring(0,4);
-            return moneybil + "億円";
-        }
-        if(moneylength >= 11) {
-            String moneybil = moneystring.substring(0,3);
-            return moneybil + "億円";
-        }
-        if(moneylength >= 10) {
-            String moneybil = moneystring.substring(0, 2);
-            return moneybil + "億円";
-        }
-        if(moneylength >= 9) {
-            String moneybil = moneystring.substring(0,1);
-            return moneybil + "億円" ;
-        }
-        if(moneylength >= 8) {
-            String moneybil = moneystring.substring(0,4);
-            return moneybil + "万円";
-        }
-        if(moneylength >= 7) {
-            String moneybil = moneystring.substring(0,3);
-            return moneybil + "万円";
-        }
-        if(moneylength >= 6) {
-            String moneybil = moneystring.substring(0,1);
-            return moneybil + "万円";
-        }
-        if(moneylength >= 5) {
-            String moneybil = moneystring.substring(0,1);
-            return moneybil + "万円";
-        }
-        if(moneylength >= 4) {
-            String moneybil = moneystring.substring(0,4);
+        if(moneylength <= 4) {
+            moneybil = moneystring.substring(0,moneylength);
             return moneybil + "円";
         }
-        if(moneylength >= 3) {
-            String moneybil = moneystring.substring(0,3);
-            return moneybil + "円";
+        if(moneylength <= 8) {
+            moneybil = moneystring.substring(0,moneylength-4);
+            return moneybil + "万円";
         }
-        if(moneylength >= 2) {
-            String moneybil = moneystring.substring(0,2);
-            return moneybil + "円";
+        if(moneylength <= 12) {
+            moneybil = moneystring.substring(0,moneylength-8);
+            return moneybil + "億円";
         }
-        if(moneylength >= 1) {
-            return premoney + "円";
+        if(moneylength <= 16) {
+            moneybil = moneystring.substring(0,moneylength-12);
+            return moneybil + "兆円";
         }
         return null;
     }
