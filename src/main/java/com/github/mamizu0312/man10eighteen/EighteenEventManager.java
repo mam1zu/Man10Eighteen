@@ -1,5 +1,6 @@
 package com.github.mamizu0312.man10eighteen;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -21,12 +22,20 @@ public class EighteenEventManager implements Listener {
         if(p == null) {
             return;
         }
+        if(plugin.prewait) {
+            Bukkit.getServer().broadcastMessage(plugin.prefix + "§e§l"+p.getName()+"§r§lさんがログアウトしたため、試合を中止しました");
+            plugin.reset();
+            return;
+        }
         if(plugin.onGame.contains(p.getUniqueId())) {
             if(plugin.onGame.get(0) == p.getUniqueId()) {
+                plugin.p1status = false;
                 battle.winp2();
                 plugin.reset();
+                return;
             }
             if(plugin.onGame.get(1) == p.getUniqueId()) {
+                plugin.p2status = false;
                 battle.winp1();
                 plugin.reset();
             }
@@ -39,6 +48,10 @@ public class EighteenEventManager implements Listener {
         }
         Player p = (Player)e.getPlayer();
         if(p == null) {
+            return;
+        }
+        if(plugin.onVoting.contains(p.getUniqueId())) {
+            plugin.onVoting.remove(p.getUniqueId());
             return;
         }
         if(plugin.onGame.contains(p.getUniqueId())) {
@@ -55,6 +68,24 @@ public class EighteenEventManager implements Listener {
     public void onInventoryClickEvent(InventoryClickEvent e) {
         Player p = (Player)e.getWhoClicked();
         if(p == null) {
+            return;
+        }
+        if(plugin.onVoting.contains(p.getUniqueId())) {
+            if(plugin.votep1.contains(p.getUniqueId()) || plugin.votep2.contains(p.getUniqueId())) {
+                return;
+            }
+            e.setCancelled(true);
+            if(e.getSlot() == 2) {
+                plugin.votep1.add(p.getUniqueId());
+                p.sendMessage(plugin.prefix + "§e§l" +plugin.onGame.get(0)+"§r§lが勝つと予想しました！");
+                p.closeInventory();
+                return;
+            }
+            if(e.getSlot() == 6) {
+                plugin.votep2.add(p.getUniqueId());
+                    p.sendMessage(plugin.prefix + "§e§l" +plugin.onGame.get(1)+"§r§lが勝つと予想しました！");
+                    p.closeInventory();
+            }
             return;
         }
         if(plugin.onGame.contains(p.getUniqueId())) {

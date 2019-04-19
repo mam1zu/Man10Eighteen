@@ -18,11 +18,13 @@ public class EighteenCommandManager implements CommandExecutor {
     double premaximumbet;
     double preminimumbet;
     EighteenMySQLManager mysql;
+    EighteenVoteManager vote;
     public EighteenCommandManager(Man10Eighteen plugin) {
         this.plugin = plugin;
         config = new EighteenConfigManager(plugin);
         vault = new VaultManager(plugin);
         mysql = new EighteenMySQLManager(plugin,"Man10Eighteen");
+        vote = new EighteenVoteManager(plugin);
     }
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
@@ -101,6 +103,14 @@ public class EighteenCommandManager implements CommandExecutor {
                 p.sendMessage(plugin.prefix + "§c§l掛け金を入力してください。");
                 return true;
             }
+            if(args[0].equalsIgnoreCase("vote")) {
+                if(plugin.votep1.contains(p.getUniqueId()) || plugin.votep2.contains(p.getUniqueId())) {
+                    p.sendMessage(plugin.prefix + "§c§lあなたはすでに投票済みです");
+                    return true;
+                }
+                vote.openvoteinv(p);
+                return true;
+            }
             if(args[0].equalsIgnoreCase("join")) {
                 if (plugin.onGame.isEmpty()) {
                     p.sendMessage(plugin.prefix + "§c§l現在開催されていません");
@@ -132,6 +142,7 @@ public class EighteenCommandManager implements CommandExecutor {
                     plugin.p1canchooserps = true;
                     plugin.p2canchooserps = true;
                     plugin.prewait = false;
+                    plugin.p2status = true;
                     return true;
                 }
                 vault.withdraw(p.getUniqueId(), plugin.betmoney);
@@ -144,10 +155,48 @@ public class EighteenCommandManager implements CommandExecutor {
                 battle.game();
                 plugin.p1canchooserps = true;
                 plugin.p2canchooserps = true;
+                plugin.p2status = true;
+            }
+            if(args[0].equalsIgnoreCase("debug")) {
+                if(!p.hasPermission("mer.staff")) {
+                    p.sendMessage(plugin.prefix + "§4§l権限がありません");
+                    return true;
+                }
+                p.sendMessage("デバッグ情報 内部の数値 開発者用");
+                p.sendMessage("round :"+plugin.round);
+                p.sendMessage("p1score :"+plugin.p1score);
+                p.sendMessage("p2score :"+plugin.p2score);
+                p.sendMessage("p1finger :"+plugin.p1finger);
+                p.sendMessage("p2finger :"+plugin.p2finger);
+                p.sendMessage("minimumbet :"+plugin.minimumbet);
+                p.sendMessage("maximumbet +"+plugin.maximumbet);
+                p.sendMessage("betmoney :"+plugin.betmoney);
+                p.sendMessage("fevertime :"+plugin.fevertime);
+                p.sendMessage("specialbonus :"+plugin.specialbonus);
+                p.sendMessage("bonuscompetitive :"+plugin.bonuscompetitive);
+                p.sendMessage("chance :"+plugin.chance);
+                p.sendMessage("p1putoutfinger :"+plugin.p1putoutfinger);
+                p.sendMessage("p2putoutfinger :"+plugin.p2putoutfinger);
+                p.sendMessage("prewait :"+plugin.prewait);
+                if(plugin.onGame.get(0) == null) {
+                    p.sendMessage("p1uuid :null");
+                } else {
+                    p.sendMessage("p1uuid :"+plugin.onGame.get(0));
+                }
+                if(plugin.onGame.get(1) == null) {
+                    p.sendMessage("p1uuid :null");
+                } else {
+                    p.sendMessage("p2uuid :"+plugin.onGame.get(1));
+                }
+                return true;
             }
             if(args[0].equalsIgnoreCase("reopen")) {
                 if(plugin.onGame.isEmpty()) {
                     p.sendMessage(plugin.prefix + "§c§lあなたは試合に参加していません");
+                    return true;
+                }
+                if(plugin.prewait) {
+                    p.sendMessage(plugin.prefix + "§c§l試合はまだ開始されていません");
                     return true;
                 }
                 if(plugin.onGame.get(0) == p.getUniqueId()) {
@@ -171,8 +220,8 @@ public class EighteenCommandManager implements CommandExecutor {
                 if(plugin.prewait) {
                     Bukkit.getServer().broadcastMessage(plugin.prefix + "§4§l試合がキャンセルされました");
                     p.sendMessage(plugin.prefix + "§c§l賭け金は返金されます");
-                    vault.deposit(p.getUniqueId(), plugin.betmoney);
-                    mysql.senddepositinfo(p,plugin.betmoney);
+                    vault.deposit(plugin.onGame.get(0), plugin.betmoney);
+                    mysql.senddepositinfo(Bukkit.getPlayer(plugin.onGame.get(0)),plugin.betmoney);
                     plugin.onGame.clear();
                     return true;
                 }
@@ -188,7 +237,6 @@ public class EighteenCommandManager implements CommandExecutor {
                 return true;
             }
         }
-
         if(args.length == 2 && args[0].equalsIgnoreCase("game")) {
             if(!plugin.plstatus) {
                 p.sendMessage(plugin.prefix + "§e§l現在プラグインは停止しています");
@@ -208,9 +256,15 @@ public class EighteenCommandManager implements CommandExecutor {
                 p.sendMessage(plugin.prefix + "§c§l賭け金が少なすぎるまたは多すぎます");
                 return true;
             }
+            if(vault.getBalance(p.getUniqueId()) <= plugin.betmoney) {
+                plugin.betmoney = 0;
+                p.sendMessage(plugin.prefix + "§c§l所持金が足りません");
+                return true;
+            }
             vault.withdraw(p.getUniqueId(), plugin.betmoney);
             mysql.sendwithdrawinfo(p,plugin.betmoney);
             getServer().broadcastMessage(plugin.prefix + "§e§l"+p.getName()+"§fさんが§e"+moneyformat(plugin.betmoney)+"§fで試合を開きました！ §a/mer join§fで参加！");
+            plugin.p1status = true;
             plugin.prewait = true;
             plugin.onGame.add(p.getUniqueId());
         }
@@ -269,23 +323,12 @@ public class EighteenCommandManager implements CommandExecutor {
     }
     void confighelp(Player p) {
             p.sendMessage("----------" + plugin.prefix + "----------");
+            p.sendMessage("§e§l/mer setconfig [関数名] [数値]: 関数名の数値の設定を変更します");
             p.sendMessage("§f§lchance: BonusTimeが発生する確率。n分の1の確立 型:int");
             p.sendMessage("§f§lmaximumbet: 最大賭け金。型:double");
             p.sendMessage("§f§lminimumbet: 最小賭け金。 型:double");
     }
     void HelpCommand(Player p) {
-        if(p.hasPermission("mer.staff")) {
-            p.sendMessage("----------"+plugin.prefix+"----------");
-            p.sendMessage("§e§l/mer help§f: このページを開きます");
-            p.sendMessage("§e§l/mer game§f: 新しく試合を開きます");
-            p.sendMessage("§e§l/mer join§f: 試合に入ります");
-            p.sendMessage("§e§l/mer reopen§f: メニューを再度開きます");
-            p.sendMessage("§c§l/mer on  §f: プラグインを起動します");
-            p.sendMessage("§c§l/mer off §f: プラグインを停止します");
-            p.sendMessage("§c§l/mer stop §f: 試合をストップします");
-            p.sendMessage("§3§lDeveloped by Mamizu0312");
-            return;
-        }
         if(p.hasPermission("mer.op") && p.hasPermission("mer.staff")) {
             p.sendMessage("----------"+plugin.prefix+"----------");
             p.sendMessage("§e§l/mer help§f: このページを開きます");
@@ -297,6 +340,18 @@ public class EighteenCommandManager implements CommandExecutor {
             p.sendMessage("§c§l/mer stop §f: 試合をストップします");
             p.sendMessage("§c§l/mer changeconfig §f:configの値を変更します");
             p.sendMessage("§c§l(注意・設定を反映するには/mer reloadを実行すること");
+            p.sendMessage("§3§lDeveloped by Mamizu0312");
+            return;
+        }
+        if(p.hasPermission("mer.staff")) {
+            p.sendMessage("----------"+plugin.prefix+"----------");
+            p.sendMessage("§e§l/mer help§f: このページを開きます");
+            p.sendMessage("§e§l/mer game§f: 新しく試合を開きます");
+            p.sendMessage("§e§l/mer join§f: 試合に入ります");
+            p.sendMessage("§e§l/mer reopen§f: メニューを再度開きます");
+            p.sendMessage("§c§l/mer on  §f: プラグインを起動します");
+            p.sendMessage("§c§l/mer off §f: プラグインを停止します");
+            p.sendMessage("§c§l/mer stop §f: 試合をストップします");
             p.sendMessage("§3§lDeveloped by Mamizu0312");
             return;
         }

@@ -7,6 +7,9 @@ import java.util.*;
 
 public final class Man10Eighteen extends JavaPlugin {
     public List<UUID> onGame = new ArrayList<>();
+    public List<UUID> onVoting = new ArrayList<>();
+    public List<UUID> votep1 = new ArrayList<>();
+    public List<UUID> votep2 = new ArrayList<>();
     boolean plstatus;
     public Inventory p1inv;
     public Inventory p2inv;
@@ -23,12 +26,13 @@ public final class Man10Eighteen extends JavaPlugin {
     public EighteenEventManager event;
     public EighteenBattleManager battle;
     EighteenConfigManager config;
+    EighteenVoteManager vote;
     int round = 1;
     int p1score = 0;
     int p2score = 0;
     int p1finger = 18;
     int p2finger = 18;
-    //最小掛け金1000万円、最大掛け金10億円
+    //最小掛け金、最大掛け金はconfigで設定
     double minimumbet;
     double maximumbet;
     double betmoney = 0;
@@ -41,6 +45,9 @@ public final class Man10Eighteen extends JavaPlugin {
     String PASS;
     String PORT;
     String DB;
+    //p1status, p2statusはtrueでオンライン、falseでオフライン
+    boolean p1status;
+    boolean p2status;
 
     @Override
     public void onEnable() {
@@ -51,6 +58,7 @@ public final class Man10Eighteen extends JavaPlugin {
         config = new EighteenConfigManager(this);
         config.load();
         vault = new VaultManager(this);
+        vote = new EighteenVoteManager(this);
     }
 
     @Override
@@ -71,5 +79,7 @@ public final class Man10Eighteen extends JavaPlugin {
         this.battle = new EighteenBattleManager(this);
         prewait = false;
         fevertime = false;
+        p1status = false;
+        p2status = false;
     }
 }

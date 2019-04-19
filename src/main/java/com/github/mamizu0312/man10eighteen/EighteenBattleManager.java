@@ -9,10 +9,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.scheduler.BukkitRunnable;
 
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 
 public class EighteenBattleManager {
@@ -141,12 +138,18 @@ public class EighteenBattleManager {
             Bukkit.getServer().broadcastMessage(plugin.prefix + "§f§lじゃんけん...§k");
             new BukkitRunnable() {
                 public void run() {
+                    if(!plugin.p1status || !plugin.p2status) {
+                        return;
+                    }
                     Bukkit.getServer().broadcastMessage(plugin.prefix + "§e§lぽん！");
                     Bukkit.getServer().broadcastMessage(plugin.prefix + "§f§l第"+plugin.round+"ラウンドは§eあいこ§fでした");
                 }
             }.runTaskLater(plugin, 40);
             new BukkitRunnable() {
                 public void run() {
+                    if(!plugin.p1status || !plugin.p2status) {
+                        return;
+                    }
                     if(plugin.round == 10) {
                         lastjudge();
                         return;
@@ -160,6 +163,9 @@ public class EighteenBattleManager {
             Bukkit.getServer().broadcastMessage(plugin.prefix + "§f§lじゃんけん...§k");
             new BukkitRunnable() {
                 public void run() {
+                    if(!plugin.p1status || !plugin.p2status) {
+                        return;
+                    }
                     Bukkit.getServer().broadcastMessage(plugin.prefix + "§e§lぽん！");
                     switch (plugin.round) {
                         case 6:
@@ -186,6 +192,9 @@ public class EighteenBattleManager {
             Bukkit.getServer().broadcastMessage(plugin.prefix + "§f§lじゃんけん...§k");
             new BukkitRunnable() {
                 public void run() {
+                    if(!plugin.p1status || !plugin.p2status) {
+                        return;
+                    }
                     Bukkit.getServer().broadcastMessage(plugin.prefix + "§e§lぽん！");
                     switch (plugin.round) {
                         case 6:
@@ -258,6 +267,9 @@ public class EighteenBattleManager {
         Bukkit.getServer().broadcastMessage(plugin.prefix + "§f試合終了! 結果は...§kaaa");
         new BukkitRunnable() {
             public void run() {
+                if(!plugin.p1status || !plugin.p2status) {
+                    return;
+                }
                 Bukkit.getServer().broadcastMessage(plugin.prefix + "§e§l"+p1.getName()+"§fのスコア: "+plugin.p1score);
                 Bukkit.getServer().broadcastMessage(plugin.prefix + "§e§l"+p2.getName()+"§fのスコア: "+plugin.p2score);
                 if(plugin.p1score == plugin.p2score) {
@@ -273,14 +285,9 @@ public class EighteenBattleManager {
                 if(plugin.p1score > plugin.p2score) {
                     Bukkit.getServer().broadcastMessage(plugin.prefix + "§e§l"+p1.getName()+"§fの勝利です！試合を終了します");
                     if(plugin.fevertime) {
-                        List<Player> serverplayer = new LinkedList<>();
-                        for(Player player : Bukkit.getOnlinePlayers()){
-                            serverplayer.add(player);
-                        }
                         Random r = new Random();
-                        Player bonusplayer = serverplayer.get(r.nextInt(serverplayer.size()));
-                        serverplayer.remove(p1);
-                        Bukkit.getServer().broadcastMessage(plugin.prefix + "§e§l"+p1.getName()+"§fと§e"+bonusplayer.getName()+"§fは追加ボーナスを受け取った！");
+                        Player bonusplayer = Bukkit.getServer().getPlayer(plugin.votep1.get(r.nextInt(plugin.votep1.size())));
+                        Bukkit.getServer().broadcastMessage(plugin.prefix + "§l勝者の§e§l"+p1.getName()+"§fと抽選で選ばれた§e"+bonusplayer.getName()+"§fは追加ボーナスを受け取った！");
                         vault.deposit(p1.getUniqueId(), plugin.betmoney * 2);
                         mysql.senddepositinfo(p1,plugin.betmoney * 2);
                         vault.deposit(p1.getUniqueId(),plugin.specialbonus / 2);
