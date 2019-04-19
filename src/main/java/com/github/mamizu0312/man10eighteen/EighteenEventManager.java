@@ -28,6 +28,16 @@ public class EighteenEventManager implements Listener {
             plugin.reset();
             return;
         }
+        if(plugin.votep1.contains(p.getUniqueId())) {
+            plugin.votep1.remove(p.getUniqueId());
+            Bukkit.getServer().broadcastMessage(plugin.prefix + "§l"+p.getName()+"はログアウトしたため、抽選対象から除外されました");
+            return;
+        }
+        if(plugin.votep2.contains(p.getUniqueId())) {
+            plugin.votep2.remove(p.getUniqueId());
+            Bukkit.getServer().broadcastMessage(plugin.prefix + "§l"+p.getName()+"はログアウトしたため、抽選対象から除外されました");
+            return;
+        }
         if(plugin.onGame.contains(p.getUniqueId())) {
             if(plugin.onGame.get(0) == p.getUniqueId()) {
                 plugin.p1status = false;
@@ -56,6 +66,9 @@ public class EighteenEventManager implements Listener {
             return;
         }
         if(plugin.onGame.contains(p.getUniqueId())) {
+            if(plugin.prewait) {
+                return;
+            }
             if(plugin.onGame.get(0) == p.getUniqueId() && plugin.p1canchooserps) {
                 p.sendMessage(plugin.prefix + "§f§l誤って閉じてしまった場合は、§e§l/mer reopen§f§lで再度開くことができます");
                     return;
@@ -90,6 +103,9 @@ public class EighteenEventManager implements Listener {
             return;
         }
         if(plugin.onGame.contains(p.getUniqueId())) {
+            if(plugin.prewait) {
+                return;
+            }
             e.setCancelled(true);
             if(plugin.onGame.get(0) == p.getUniqueId()) {
                 if(plugin.p1canchooserps){

@@ -190,7 +190,7 @@ public class EighteenCommandManager implements CommandExecutor {
                 if(r.nextInt(plugin.chance)+1 == 1) {
                     plugin.fevertime = true;
                     getServer().broadcastMessage(plugin.prefix + "§e§l" + p.getName() + "§fさんが参加しました！");
-                    getServer().broadcastMessage(plugin.prefix + "§k§ea§r§e§lBonusTime§ka");
+                    getServer().broadcastMessage(plugin.prefix + "§e§ka§r§e§lBonusTime§ka");
                     getServer().broadcastMessage(plugin.prefix + "§e§l大金獲得のチャンス！勝者を予想してストックを手に入れろ！");
                     vault.withdraw(p.getUniqueId(), plugin.betmoney);
                     mysql.sendwithdrawinfo(p,plugin.betmoney);
@@ -435,6 +435,7 @@ public class EighteenCommandManager implements CommandExecutor {
             p.sendMessage("§e§l/mer game§f: 新しく試合を開きます");
             p.sendMessage("§e§l/mer join§f: 試合に入ります");
             p.sendMessage("§e§l/mer reopen§f: メニューを再度開きます");
+            p.sendMessage("§e§l/mer vote§f: 勝者の予想ができます");
             p.sendMessage("§l==========§cSTAFF以上§r§l==========");
             p.sendMessage("§c§l/mer on  §f: プラグインを起動します");
             p.sendMessage("§c§l/mer off §f: プラグインを停止します");
@@ -449,6 +450,7 @@ public class EighteenCommandManager implements CommandExecutor {
             p.sendMessage("§e§l/mer game§f: 新しく試合を開きます");
             p.sendMessage("§e§l/mer join§f: 試合に入ります");
             p.sendMessage("§e§l/mer reopen§f: メニューを再度開きます");
+            p.sendMessage("§e§l/mer vote§f: 勝者の予想ができます");
             p.sendMessage("§l==========§cSTAFF以上§r§l==========");
             p.sendMessage("§c§l/mer on  §f: プラグインを起動します");
             p.sendMessage("§c§l/mer off §f: プラグインを停止します");
@@ -460,6 +462,7 @@ public class EighteenCommandManager implements CommandExecutor {
         p.sendMessage("§e§l/mer game§f: 新しく試合を開きます");
         p.sendMessage("§e§l/mer join§f: 試合に入ります");
         p.sendMessage("§e§l/mer reopen§f: メニューを再度開きます");
+        p.sendMessage("§e§l/mer vote§f: 勝者の予想ができます");
     }
     String moneyformat(double money) {
         String moneystring;

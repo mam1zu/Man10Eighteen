@@ -285,6 +285,17 @@ public class EighteenBattleManager {
                 if(plugin.p1score > plugin.p2score) {
                     Bukkit.getServer().broadcastMessage(plugin.prefix + "§e§l"+p1.getName()+"§fの勝利です！試合を終了します");
                     if(plugin.fevertime) {
+                        if(plugin.votep1.isEmpty()) {
+                            Bukkit.getServer().broadcastMessage(plugin.prefix + "§e§l"+p1.getName()+"が勝利しましたが、だれも予想していなかったためストックは勝者にすべて支払われます！");
+                            vault.deposit(p1.getUniqueId(), plugin.betmoney * 2);
+                            mysql.senddepositinfo(p1,plugin.betmoney * 2);
+                            vault.deposit(p1.getUniqueId(),plugin.specialbonus);
+                            mysql.senddepositinfo(p1,plugin.specialbonus);
+                            plugin.specialbonus = 0;
+                            config.reload();
+                            plugin.fevertime = false;
+                            return;
+                        }
                         Random r = new Random();
                         Player bonusplayer = Bukkit.getServer().getPlayer(plugin.votep1.get(r.nextInt(plugin.votep1.size())));
                         Bukkit.getServer().broadcastMessage(plugin.prefix + "§l勝者の§e§l"+p1.getName()+"§fと抽選で選ばれた§e"+bonusplayer.getName()+"§fは追加ボーナスを受け取った！");
@@ -307,18 +318,24 @@ public class EighteenBattleManager {
                 } else {
                     Bukkit.getServer().broadcastMessage(plugin.prefix + "§e§l"+p2.getName()+"§fの勝利です！試合を終了します");
                     if(plugin.fevertime) {
-                        List<Player> serverplayer = new LinkedList<>();
-                        for(Player player : Bukkit.getOnlinePlayers()){
-                            serverplayer.add(player);
+                        if(plugin.votep2.isEmpty()) {
+                            Bukkit.getServer().broadcastMessage(plugin.prefix + "§e§l"+p2.getName()+"が勝利しましたが、だれも予想していなかったためストックは勝者にすべて支払われます！");
+                            vault.deposit(p2.getUniqueId(), plugin.betmoney * 2);
+                            mysql.senddepositinfo(p2,plugin.betmoney * 2);
+                            vault.deposit(p2.getUniqueId(),plugin.specialbonus);
+                            mysql.senddepositinfo(p2,plugin.specialbonus);
+                            plugin.specialbonus = 0;
+                            config.reload();
+                            plugin.fevertime = false;
+                            return;
                         }
-                        serverplayer.remove(p2);
                         Random r = new Random();
-                        Player bonusplayer = serverplayer.get(r.nextInt(serverplayer.size()));
-                        Bukkit.getServer().broadcastMessage(plugin.prefix + "§e§l"+p2.getName()+"§fと§e"+bonusplayer.getName()+"§fは追加ボーナスを受け取った！");
+                        Player bonusplayer = Bukkit.getServer().getPlayer(plugin.votep2.get(r.nextInt(plugin.votep2.size())));
+                        Bukkit.getServer().broadcastMessage(plugin.prefix + "§l勝者の§e§l"+p1.getName()+"§fと抽選で選ばれた§e"+bonusplayer.getName()+"§fは追加ボーナスを受け取った！");
                         vault.deposit(p2.getUniqueId(), plugin.betmoney * 2);
                         mysql.senddepositinfo(p2,plugin.betmoney * 2);
                         vault.deposit(p2.getUniqueId(),plugin.specialbonus / 2);
-                        mysql.senddepositinfo(p2,plugin.specialbonus);
+                        mysql.senddepositinfo(p2,plugin.specialbonus/2);
                         vault.deposit(bonusplayer.getUniqueId(), plugin.specialbonus / 2);
                         mysql.senddepositinfo(bonusplayer,plugin.specialbonus / 2);
 
