@@ -168,8 +168,8 @@ public class EighteenEventManager implements Listener {
     public void onValueSelectedEvent(valueSelectedEvent e){
         if(e.getPluginname().equalsIgnoreCase("Man10Eighteen")){
             //ここに処理を書く
-            e.getPlayer().sendMessage(plugin.prefix+"§e§l検出した金額: "+Man10Eighteen.getJpBal(e.getValue())+"円z");
-            Man10Eighteen.sendHoverText(e.getPlayer(),plugin.prefix+"§6§l§kaa§e§lここをクリックで募集します！§6§l§kaa","§a募集開始","mer game "+e.getValue());
+            e.getPlayer().sendMessage(plugin.prefix+"§e§l検出した金額: "+Man10Eighteen.getJpBal(e.getValue())+"円");
+            Man10Eighteen.sendHoverText(e.getPlayer(),plugin.prefix+"§6§l§kaa§e§lここをクリックで募集します！§6§l§kaa","§a募集開始","/mer game "+e.getValue());
         }
     }
 }

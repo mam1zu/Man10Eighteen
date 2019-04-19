@@ -100,7 +100,7 @@ public final class Man10Eighteen extends JavaPlugin {
     }
 
     public static String getJpBal(double balance){
-        int val = (int)balance;
+        long val = (long)balance;
         String addition = "";
         String form = "万";
         long man = val/10000;
