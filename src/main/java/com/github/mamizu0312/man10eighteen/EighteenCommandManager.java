@@ -1,10 +1,16 @@
 package com.github.mamizu0312.man10eighteen;
 
+import net.md_5.bungee.api.ChatColor;
+import net.md_5.bungee.api.chat.ClickEvent;
+import net.md_5.bungee.api.chat.ComponentBuilder;
+import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.scheduler.BukkitRunnable;
+
 import java.util.Random;
 
 import static org.bukkit.Bukkit.getServer;
@@ -37,10 +43,49 @@ public class EighteenCommandManager implements CommandExecutor {
             return true;
         }
         if(args.length == 0) {
-            HelpCommand(p);
+            p.sendMessage("=========="+plugin.prefix+"==========");
+            if(plugin.prewait) {
+                p.sendMessage("§e§l現在参加者を募集しています！");
+                p.sendMessage("§e賭け金: §l"+plugin.betmoney);
+            } else {
+                p.sendMessage("§c現在試合は開催されていません");
+            }
+            p.sendMessage("§e§l現在のストック: "+plugin.specialbonus+"円");
+            TextComponent ruletc = new TextComponent();
+            ruletc.setColor(ChatColor.MAGIC);
+            ruletc.addExtra("a");
+            ruletc.setColor(ChatColor.RESET);
+            ruletc.addExtra("ルールはここをクリック");
+            ruletc.setColor(ChatColor.MAGIC);
+            ruletc.addExtra("a");
+            ruletc.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/mer rule"));
+            p.spigot().sendMessage(ruletc);
+            TextComponent helptc = new TextComponent();
+            helptc.setColor(ChatColor.MAGIC);
+            helptc.addExtra("a");
+            helptc.setColor(ChatColor.RESET);
+            helptc.addExtra("ヘルプはここをクリック");
+            helptc.setColor(ChatColor.MAGIC);
+            helptc.addExtra("a");
+            helptc.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/mer help"));
+            p.spigot().sendMessage(helptc);
+            p.sendMessage("§3§lDeveloped by Mamizu0312");
             return true;
         }
         if(args.length == 1) {
+            if(args[0].equalsIgnoreCase("rule")) {
+                p.sendMessage("=========="+plugin.prefix+"§e§lルール解説§r==========");
+                p.sendMessage("じゃんけんを10回行います。使える指は18本です。");
+                p.sendMessage("パーは5本、チョキは2本、グーは0本です。");
+                p.sendMessage("勝てば1ポイント、あいこは特典なし、6ラウンドと10ラウンドは2ポイント獲得できます。");
+                p.sendMessage("指が余った場合、スコアからマイナスされるので気を付けてください。");
+                p.sendMessage("得点が多いほうが勝ち、同点は引き分けです。");
+                p.sendMessage("勝負するたびに賭け金の5%がストックに貯まっていきます。");
+                p.sendMessage("§e§l§ka§r§e§lBonusTime§e§l§ka§rについて");
+                p.sendMessage("BonusTimeが始まると、どちらが勝つか予想し、投票できるようになります。");
+                p.sendMessage("ゲームが終わると、勝者に投票した人の中から抽選でプレイヤーが選ばれます。");
+                p.sendMessage("選ばれたプレイヤーは、勝者とストックを山分けできます。(1/2)");
+            }
             if (args[0].equalsIgnoreCase("on")) {
                 if(!p.hasPermission("mer.staff")) {
                     p.sendMessage(plugin.prefix + "§4§l権限がありません");
@@ -104,10 +149,23 @@ public class EighteenCommandManager implements CommandExecutor {
                 return true;
             }
             if(args[0].equalsIgnoreCase("vote")) {
+                if(plugin.onGame.isEmpty()) {
+                    p.sendMessage(plugin.prefix + "§c現在開催されていません");
+                    return true;
+                }
+                if(!plugin.votetime) {
+                    p.sendMessage(plugin.prefix + "§c現在投票は受け付けていません");
+                    return true;
+                }
                 if(plugin.votep1.contains(p.getUniqueId()) || plugin.votep2.contains(p.getUniqueId())) {
                     p.sendMessage(plugin.prefix + "§c§lあなたはすでに投票済みです");
                     return true;
                 }
+                if(plugin.onGame.contains(p.getUniqueId())) {
+                    p.sendMessage(plugin.prefix + "§c§l選手は投票できません");
+                    return true;
+                }
+                plugin.onVoting.add(p.getUniqueId());
                 vote.openvoteinv(p);
                 return true;
             }
@@ -131,18 +189,59 @@ public class EighteenCommandManager implements CommandExecutor {
                 Random r = new Random();
                 if(r.nextInt(plugin.chance)+1 == 1) {
                     plugin.fevertime = true;
-                    getServer().broadcastMessage(plugin.prefix + "§e§l" + p.getName() + "§fさんが参加しました！ゲームを開始します...§ka");
-                    getServer().broadcastMessage(plugin.prefix + "§ka§r§e§lBonusTime§ka");
+                    getServer().broadcastMessage(plugin.prefix + "§e§l" + p.getName() + "§fさんが参加しました！");
+                    getServer().broadcastMessage(plugin.prefix + "§k§ea§r§e§lBonusTime§ka");
+                    getServer().broadcastMessage(plugin.prefix + "§e§l大金獲得のチャンス！勝者を予想してストックを手に入れろ！");
                     vault.withdraw(p.getUniqueId(), plugin.betmoney);
                     mysql.sendwithdrawinfo(p,plugin.betmoney);
                     plugin.onGame.add(p.getUniqueId());
+                    plugin.votetime = true;
                     battle = new EighteenBattleManager(plugin, Bukkit.getPlayer(plugin.onGame.get(0)), p);
                     plugin.event.battle =  battle;
-                    battle.game();
-                    plugin.p1canchooserps = true;
-                    plugin.p2canchooserps = true;
-                    plugin.prewait = false;
-                    plugin.p2status = true;
+                    Bukkit.getServer().broadcastMessage(plugin.prefix + "§a投票受付終了まで残り60秒");
+                    new BukkitRunnable() {
+                        public void run() {
+                            Bukkit.broadcastMessage(plugin.prefix + "§a投票受付終了まで残り30秒");
+                        }
+                    }.runTaskLater(plugin,600);
+                    new BukkitRunnable() {
+                        public void run() {
+                            Bukkit.broadcastMessage(plugin.prefix + "§a投票受付終了まで残り10秒");
+                        }
+                    }.runTaskLater(plugin,1000);
+                    new BukkitRunnable() {
+                        public void run() {
+                            Bukkit.broadcastMessage(plugin.prefix + "§a投票受付終了まで残り5秒");
+                        }
+                    }.runTaskLater(plugin,1100);
+                    new BukkitRunnable() {
+                        public void run() {
+                            Bukkit.broadcastMessage(plugin.prefix + "§a投票受付終了まで3秒");
+                        }
+                    }.runTaskLater(plugin,1140);
+                    new BukkitRunnable() {
+                        public void run() {
+                            Bukkit.getServer().broadcastMessage(plugin.prefix + "§a投票受付終了まで残り2秒");
+                        }
+                    }.runTaskLater(plugin,1160);
+                    new BukkitRunnable() {
+                        public void run() {
+                            Bukkit.getServer().broadcastMessage(plugin.prefix + "§a投票受付終了まで残り1秒");
+                        }
+                    }.runTaskLater(plugin,1180);
+                    new BukkitRunnable() {
+                        public void run() {
+                            Bukkit.getServer().broadcastMessage(plugin.prefix + "§a終了しました");
+                            plugin.votetime = false;
+                            battle = new EighteenBattleManager(plugin, Bukkit.getPlayer(plugin.onGame.get(0)), p);
+                            plugin.event.battle =  battle;
+                            battle.game();
+                            plugin.p1canchooserps = true;
+                            plugin.p2canchooserps = true;
+                            plugin.prewait = false;
+                            plugin.p2status = true;
+                        }
+                    }.runTaskLater(plugin, 1200);
                     return true;
                 }
                 vault.withdraw(p.getUniqueId(), plugin.betmoney);
@@ -223,6 +322,7 @@ public class EighteenCommandManager implements CommandExecutor {
                     vault.deposit(plugin.onGame.get(0), plugin.betmoney);
                     mysql.senddepositinfo(Bukkit.getPlayer(plugin.onGame.get(0)),plugin.betmoney);
                     plugin.onGame.clear();
+                    plugin.reset();
                     return true;
                 }
                 battle.emergencystop();
@@ -340,7 +440,6 @@ public class EighteenCommandManager implements CommandExecutor {
             p.sendMessage("§c§l/mer stop §f: 試合をストップします");
             p.sendMessage("§c§l/mer changeconfig §f:configの値を変更します");
             p.sendMessage("§c§l(注意・設定を反映するには/mer reloadを実行すること");
-            p.sendMessage("§3§lDeveloped by Mamizu0312");
             return;
         }
         if(p.hasPermission("mer.staff")) {
@@ -352,7 +451,6 @@ public class EighteenCommandManager implements CommandExecutor {
             p.sendMessage("§c§l/mer on  §f: プラグインを起動します");
             p.sendMessage("§c§l/mer off §f: プラグインを停止します");
             p.sendMessage("§c§l/mer stop §f: 試合をストップします");
-            p.sendMessage("§3§lDeveloped by Mamizu0312");
             return;
         }
         p.sendMessage("----------"+plugin.prefix+"----------");
@@ -360,7 +458,6 @@ public class EighteenCommandManager implements CommandExecutor {
         p.sendMessage("§e§l/mer game§f: 新しく試合を開きます");
         p.sendMessage("§e§l/mer join§f: 試合に入ります");
         p.sendMessage("§e§l/mer reopen§f: メニューを再度開きます");
-        p.sendMessage("§3§lDeveloped by Mamizu0312");
     }
     String moneyformat(double money) {
         String moneystring;

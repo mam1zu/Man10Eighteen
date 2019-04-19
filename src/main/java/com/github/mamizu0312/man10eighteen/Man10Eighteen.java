@@ -48,6 +48,8 @@ public final class Man10Eighteen extends JavaPlugin {
     //p1status, p2statusはtrueでオンライン、falseでオフライン
     boolean p1status;
     boolean p2status;
+    //votetimeはtrueで投票受付中、falseで投票受付停止中
+    boolean votetime;
 
     @Override
     public void onEnable() {
@@ -81,5 +83,6 @@ public final class Man10Eighteen extends JavaPlugin {
         fevertime = false;
         p1status = false;
         p2status = false;
+        votetime = false;
     }
 }
