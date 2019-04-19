@@ -84,7 +84,7 @@ public class EighteenCommandManager implements CommandExecutor {
                 p.sendMessage("§e§l§ka§r§e§lBonusTime§e§l§ka§rについて");
                 p.sendMessage("BonusTimeが始まると、どちらが勝つか予想し、投票できるようになります。");
                 p.sendMessage("ゲームが終わると、勝者に投票した人の中から抽選でプレイヤーが選ばれます。");
-                p.sendMessage("選ばれたプレイヤーは、勝者とストックを山分けできます。(1/2)");
+                p.sendMessage("選ばれたプレイヤーは、勝者とストックを山分けできます。(半分ずつもらえます)");
             }
             if (args[0].equalsIgnoreCase("on")) {
                 if(!p.hasPermission("mer.staff")) {
@@ -99,6 +99,10 @@ public class EighteenCommandManager implements CommandExecutor {
                     return true;
                 }
                 p.sendMessage(plugin.prefix + "§c§lプラグインはすでに起動しています");
+                return true;
+            }
+            if (args[0].equalsIgnoreCase("game")) {
+                plugin.msi.openInventory(p);
                 return true;
             }
             if (args[0].equalsIgnoreCase("off")) {
@@ -142,10 +146,6 @@ public class EighteenCommandManager implements CommandExecutor {
             }
             if(args[0].equalsIgnoreCase("help")) {
                 HelpCommand(p);
-                return true;
-            }
-            if(args[0].equalsIgnoreCase("game")) {
-                p.sendMessage(plugin.prefix + "§c§l掛け金を入力してください。");
                 return true;
             }
             if(args[0].equalsIgnoreCase("vote")) {
