@@ -435,11 +435,12 @@ public class EighteenCommandManager implements CommandExecutor {
             p.sendMessage("§e§l/mer game§f: 新しく試合を開きます");
             p.sendMessage("§e§l/mer join§f: 試合に入ります");
             p.sendMessage("§e§l/mer reopen§f: メニューを再度開きます");
+            p.sendMessage("§l==========§cSTAFF以上§r§l==========");
             p.sendMessage("§c§l/mer on  §f: プラグインを起動します");
             p.sendMessage("§c§l/mer off §f: プラグインを停止します");
             p.sendMessage("§c§l/mer stop §f: 試合をストップします");
+            p.sendMessage("§l==========§cOP以上§r§l==========");
             p.sendMessage("§c§l/mer changeconfig §f:configの値を変更します");
-            p.sendMessage("§c§l(注意・設定を反映するには/mer reloadを実行すること");
             return;
         }
         if(p.hasPermission("mer.staff")) {
@@ -448,6 +449,7 @@ public class EighteenCommandManager implements CommandExecutor {
             p.sendMessage("§e§l/mer game§f: 新しく試合を開きます");
             p.sendMessage("§e§l/mer join§f: 試合に入ります");
             p.sendMessage("§e§l/mer reopen§f: メニューを再度開きます");
+            p.sendMessage("§l==========§cSTAFF以上§r§l==========");
             p.sendMessage("§c§l/mer on  §f: プラグインを起動します");
             p.sendMessage("§c§l/mer off §f: プラグインを停止します");
             p.sendMessage("§c§l/mer stop §f: 試合をストップします");
