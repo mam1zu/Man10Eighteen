@@ -31,12 +31,12 @@ public class EighteenVoteManager {
         p1buttom.setItemMeta(p1buttommeta);
 
         ItemStack p2buttom = new ItemStack(Material.SKULL_ITEM,1,(short)3);
-        ItemMeta p2buttommeta = p2buttom.getItemMeta();
+        SkullMeta p2buttommeta = (SkullMeta) p2buttom.getItemMeta();
         p2buttommeta.setDisplayName("§c§l"+Bukkit.getPlayer(plugin.onGame.get(1)).getName());
         List<String> p2buttomlore = new ArrayList<>();
         p2buttomlore.add("§e§lこのプレイヤーが勝利すると予想！");
         OfflinePlayer p2offline = Bukkit.getOfflinePlayer(plugin.onGame.get(1));
-        p1buttommeta.setOwningPlayer(p2offline);
+        p2buttommeta.setOwningPlayer(p2offline);
         p2buttommeta.setLore(p2buttomlore);
         p2buttom.setItemMeta(p2buttommeta);
         voteinv.setItem(2,p1buttom);

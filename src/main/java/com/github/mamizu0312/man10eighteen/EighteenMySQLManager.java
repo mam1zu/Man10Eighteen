@@ -2,13 +2,10 @@ package com.github.mamizu0312.man10eighteen;
 
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
-import org.bukkit.plugin.java.JavaPlugin;
 
 import java.sql.Connection;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.logging.Level;
 
 /**
  * Created by takatronix on 2017/03/05.

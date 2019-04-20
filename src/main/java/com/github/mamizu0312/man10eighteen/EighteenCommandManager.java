@@ -46,7 +46,7 @@ public class EighteenCommandManager implements CommandExecutor {
             p.sendMessage("=========="+plugin.prefix+"==========");
             if(plugin.prewait) {
                 p.sendMessage("§e§l現在参加者を募集しています！");
-                p.sendMessage("§e賭け金: §l"+plugin.betmoney);
+                p.sendMessage("§e賭け金: §l"+moneyformat(plugin.betmoney));
             } else {
                 p.sendMessage("§c現在試合は開催されていません");
             }
@@ -192,45 +192,93 @@ public class EighteenCommandManager implements CommandExecutor {
                     getServer().broadcastMessage(plugin.prefix + "§e§l" + p.getName() + "§fさんが参加しました！");
                     getServer().broadcastMessage(plugin.prefix + "§e§ka§r§e§lBonusTime§ka");
                     getServer().broadcastMessage(plugin.prefix + "§e§l大金獲得のチャンス！勝者を予想してストックを手に入れろ！");
+                    TextComponent clicktovote = new TextComponent();
+                    clicktovote.setColor(ChatColor.YELLOW);
+                    clicktovote.setColor(ChatColor.MAGIC);
+                    clicktovote.addExtra("a");
+                    clicktovote.setColor(ChatColor.RESET);
+                    clicktovote.setColor(ChatColor.YELLOW);
+                    clicktovote.setBold(true);
+                    clicktovote.addExtra("ここをクリックで抽選に参加");
+                    clicktovote.setColor(ChatColor.RESET);
+                    clicktovote.setColor(ChatColor.YELLOW);
+                    clicktovote.setColor(ChatColor.MAGIC);
+                    clicktovote.addExtra("a");
+                    clicktovote.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/mer vote"));
+                    Bukkit.spigot().broadcast(clicktovote);
                     vault.withdraw(p.getUniqueId(), plugin.betmoney);
                     mysql.sendwithdrawinfo(p,plugin.betmoney);
                     plugin.onGame.add(p.getUniqueId());
                     plugin.votetime = true;
                     battle = new EighteenBattleManager(plugin, Bukkit.getPlayer(plugin.onGame.get(0)), p);
                     plugin.event.battle =  battle;
-                    Bukkit.getServer().broadcastMessage(plugin.prefix + "§a投票受付終了まで残り60秒");
+                    plugin.prewait = false;
+                    plugin.onGame.add(p.getUniqueId());
+                    Bukkit.getServer().broadcastMessage(plugin.prefix + "§a抽選受付終了まで残り60秒");
                     new BukkitRunnable() {
                         public void run() {
-                            Bukkit.broadcastMessage(plugin.prefix + "§a投票受付終了まで残り30秒");
+                            if(plugin.onGame.isEmpty()) {
+                                return;
+                            }
+                            Bukkit.broadcastMessage(plugin.prefix + "§a抽選受付終了まで残り30秒");
+                            Bukkit.spigot().broadcast(clicktovote);
                         }
                     }.runTaskLater(plugin,600);
                     new BukkitRunnable() {
                         public void run() {
-                            Bukkit.broadcastMessage(plugin.prefix + "§a投票受付終了まで残り10秒");
+                            if(plugin.onGame.isEmpty()) {
+                                return;
+                            }
+                            Bukkit.broadcastMessage(plugin.prefix + "§a抽選受付終了まで残り10秒");
+                            Bukkit.spigot().broadcast(clicktovote);
                         }
                     }.runTaskLater(plugin,1000);
                     new BukkitRunnable() {
                         public void run() {
-                            Bukkit.broadcastMessage(plugin.prefix + "§a投票受付終了まで残り5秒");
+                            if(plugin.onGame.isEmpty()) {
+                                return;
+                            }
+                            Bukkit.broadcastMessage(plugin.prefix + "§a抽選受付終了まで残り5秒");
+                            Bukkit.spigot().broadcast(clicktovote);
                         }
                     }.runTaskLater(plugin,1100);
                     new BukkitRunnable() {
                         public void run() {
-                            Bukkit.broadcastMessage(plugin.prefix + "§a投票受付終了まで3秒");
+                            if(plugin.onGame.isEmpty()) {
+                                return;
+                            }
+                            Bukkit.getServer().broadcastMessage(plugin.prefix + "§a抽選受付終了まで残り4秒");
+                        }
+                    }.runTaskLater(plugin,1120);
+                    new BukkitRunnable() {
+                        public void run() {
+                            if(plugin.onGame.isEmpty()) {
+                                return;
+                            }
+                            Bukkit.broadcastMessage(plugin.prefix + "§a抽選受付終了まで残り3秒");
                         }
                     }.runTaskLater(plugin,1140);
                     new BukkitRunnable() {
                         public void run() {
-                            Bukkit.getServer().broadcastMessage(plugin.prefix + "§a投票受付終了まで残り2秒");
+                            if(plugin.onGame.isEmpty()) {
+                                return;
+                            }
+                            Bukkit.getServer().broadcastMessage(plugin.prefix + "§a抽選受付終了まで残り2秒");
                         }
                     }.runTaskLater(plugin,1160);
                     new BukkitRunnable() {
                         public void run() {
-                            Bukkit.getServer().broadcastMessage(plugin.prefix + "§a投票受付終了まで残り1秒");
+                            if(plugin.onGame.isEmpty()) {
+                                return;
+                            }
+                            Bukkit.getServer().broadcastMessage(plugin.prefix + "§a抽選受付終了まで残り1秒");
                         }
                     }.runTaskLater(plugin,1180);
                     new BukkitRunnable() {
                         public void run() {
+                            if(plugin.onGame.isEmpty()) {
+                                return;
+                            }
                             Bukkit.getServer().broadcastMessage(plugin.prefix + "§a終了しました");
                             plugin.votetime = false;
                             battle = new EighteenBattleManager(plugin, Bukkit.getPlayer(plugin.onGame.get(0)), p);
@@ -247,8 +295,6 @@ public class EighteenCommandManager implements CommandExecutor {
                 vault.withdraw(p.getUniqueId(), plugin.betmoney);
                 mysql.sendwithdrawinfo(p,plugin.betmoney);
                 getServer().broadcastMessage(plugin.prefix + "§e§l" + p.getName() + "§fさんが参加しました！ゲームを開始します...");
-                plugin.prewait = false;
-                plugin.onGame.add(p.getUniqueId());
                 battle = new EighteenBattleManager(plugin, Bukkit.getPlayer(plugin.onGame.get(0)), p);
                 plugin.event.battle =  battle;
                 battle.game();
@@ -299,10 +345,18 @@ public class EighteenCommandManager implements CommandExecutor {
                     return true;
                 }
                 if(plugin.onGame.get(0) == p.getUniqueId()) {
+                    if(!plugin.p1canchooserps) {
+                        p.sendMessage(plugin.prefix + "§cあなたはすでに選択しています");
+                        return true;
+                    }
                     p.openInventory(plugin.p1inv);
                     return true;
                 }
                 if(plugin.onGame.get(1) == p.getUniqueId()) {
+                    if(!plugin.p2canchooserps) {
+                        p.sendMessage(plugin.prefix + "§cあなたはすでに選択しています");
+                        return true;
+                    }
                     p.openInventory(plugin.p2inv);
                     return true;
                 }

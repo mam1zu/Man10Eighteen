@@ -91,14 +91,14 @@ public class EighteenEventManager implements Listener {
             e.setCancelled(true);
             if(e.getSlot() == 2) {
                 plugin.votep1.add(p.getUniqueId());
-                p.sendMessage(plugin.prefix + "§e§l" +plugin.onGame.get(0)+"§r§lが勝つと予想しました！");
+                Bukkit.getServer().broadcastMessage(plugin.prefix + "§l"+p.getName()+"は§3§l"+Bukkit.getPlayer(plugin.onGame.get(0)).getName()+"§r§lが勝つと予想しました！");
                 p.closeInventory();
                 return;
             }
             if(e.getSlot() == 6) {
                 plugin.votep2.add(p.getUniqueId());
-                    p.sendMessage(plugin.prefix + "§e§l" +plugin.onGame.get(1)+"§r§lが勝つと予想しました！");
-                    p.closeInventory();
+                Bukkit.getServer().broadcastMessage(plugin.prefix + "§l"+p.getName()+"は§c§l"+Bukkit.getPlayer(plugin.onGame.get(1)).getName()+"§r§lが勝つと予想しました！");
+                p.closeInventory();
             }
             return;
         }
