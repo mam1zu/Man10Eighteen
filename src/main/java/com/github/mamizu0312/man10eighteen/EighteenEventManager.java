@@ -24,9 +24,11 @@ public class EighteenEventManager implements Listener {
             return;
         }
         if(plugin.prewait) {
-            Bukkit.getServer().broadcastMessage(plugin.prefix + "§e§l"+p.getName()+"§r§lさんがログアウトしたため、試合を中止しました");
-            plugin.reset();
-            return;
+            if(plugin.onGame.contains(p.getUniqueId())) {
+                Bukkit.getServer().broadcastMessage(plugin.prefix + "§e§l" + p.getName() + "§r§lさんがログアウトしたため、試合を中止しました");
+                plugin.reset();
+                return;
+            }
         }
         if(plugin.votep1.contains(p.getUniqueId())) {
             plugin.votep1.remove(p.getUniqueId());

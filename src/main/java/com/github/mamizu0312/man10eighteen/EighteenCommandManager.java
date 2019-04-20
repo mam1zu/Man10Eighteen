@@ -298,10 +298,10 @@ public class EighteenCommandManager implements CommandExecutor {
                 plugin.event.battle =  battle;
                 plugin.onGame.add(p.getUniqueId());
                 plugin.prewait = false;
-                battle.game();
                 plugin.p1canchooserps = true;
                 plugin.p2canchooserps = true;
                 plugin.p2status = true;
+                battle.game();
             }
             if(args[0].equalsIgnoreCase("debug")) {
                 if(!p.hasPermission("mer.staff")) {
@@ -451,7 +451,7 @@ public class EighteenCommandManager implements CommandExecutor {
                     if(!plugin.prewait) {
                         return;
                     }
-                    getServer().broadcastMessage(plugin.prefix + "§a試合終了まで残り3秒");
+                    getServer().broadcastMessage(plugin.prefix + "§a試合受付終了まで残り3秒");
                 }
             }.runTaskLater(plugin,1140);
             new BukkitRunnable() {
@@ -459,7 +459,7 @@ public class EighteenCommandManager implements CommandExecutor {
                     if(!plugin.prewait) {
                         return;
                     }
-                    getServer().broadcastMessage(plugin.prefix + "§a試合終了まで残り2秒");
+                    getServer().broadcastMessage(plugin.prefix + "§a試合受付終了まで残り2秒");
                 }
             }.runTaskLater(plugin,1160);
             new BukkitRunnable() {
@@ -467,7 +467,7 @@ public class EighteenCommandManager implements CommandExecutor {
                     if(!plugin.prewait) {
                         return;
                     }
-                    getServer().broadcastMessage(plugin.prefix + "§a試合終了まで残り1秒");
+                    getServer().broadcastMessage(plugin.prefix + "§a試合受付終了まで残り1秒");
                 }
             }.runTaskLater(plugin,1180);
             new BukkitRunnable() {
