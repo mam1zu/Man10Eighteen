@@ -68,8 +68,9 @@ public class EighteenBattleManager {
         p1skullmeta.setLore(p1skulllore);
         p1skullmeta.setDisplayName("§l§3"+p1.getName());
         OfflinePlayer p1offline = Bukkit.getOfflinePlayer(p1.getUniqueId());
-        p1skullmeta.setOwningPlayer(p1offline);
+        p1skullmeta.setOwner(p1offline.getName());
         p1Skull.setItemMeta(p1skullmeta);
+
 
         ItemStack p2Skull = new ItemStack(Material.SKULL_ITEM, 1, (short) 3);
         SkullMeta p2skullmeta = (SkullMeta) p2Skull.getItemMeta();
@@ -79,7 +80,7 @@ public class EighteenBattleManager {
         p2skullmeta.setLore(p2skulllore);
         p2skullmeta.setDisplayName("§l§c"+p2.getName());
         OfflinePlayer p2offline = Bukkit.getOfflinePlayer(p2.getUniqueId());
-        p2skullmeta.setOwningPlayer(p2offline);
+        p2skullmeta.setOwner(p2offline.getName());
         p2Skull.setItemMeta(p2skullmeta);
 
         ItemStack roundwatch = new ItemStack(Material.WATCH,1);
@@ -137,14 +138,24 @@ public class EighteenBattleManager {
     void judge() {
         int result = rpsjudge();
         if(result == 0) {
-            Bukkit.getServer().broadcastMessage(plugin.prefix + "§f§lじゃんけん...§k");
+            Bukkit.getServer().broadcastMessage(plugin.prefix + "§f§lじゃんけん...§ka");
             new BukkitRunnable() {
                 public void run() {
                     if(!plugin.p1status || !plugin.p2status) {
                         return;
                     }
                     Bukkit.getServer().broadcastMessage(plugin.prefix + "§e§lぽん！");
-                    Bukkit.getServer().broadcastMessage(plugin.prefix + "§f§l第"+plugin.round+"ラウンドは§eあいこ§fでした");
+                    new BukkitRunnable() {
+                        public void run() {
+                            Bukkit.getServer().broadcastMessage(plugin.prefix + "§3§l" + p1.getName() + "§r :" + fingertostring(plugin.p1putoutfinger));
+                            Bukkit.getServer().broadcastMessage(plugin.prefix + "§c§l" + p2.getName() + "§r :" + fingertostring(plugin.p2putoutfinger));
+                        }
+                    }.runTaskLater(plugin, 20);
+                    new BukkitRunnable() {
+                        public void run() {
+                            Bukkit.getServer().broadcastMessage(plugin.prefix +"§f§l第"+plugin.round+"ラウンドは§eあいこ§fでした");
+                        }
+                    }.runTaskLater(plugin,40);
                 }
             }.runTaskLater(plugin, 40);
             new BukkitRunnable() {
@@ -162,60 +173,88 @@ public class EighteenBattleManager {
             }.runTaskLater(plugin,41);
         }
         if(result == 1) {
-            Bukkit.getServer().broadcastMessage(plugin.prefix + "§f§lじゃんけん...§k");
+            Bukkit.getServer().broadcastMessage(plugin.prefix + "§f§lじゃんけん...§ka");
             new BukkitRunnable() {
                 public void run() {
-                    if(!plugin.p1status || !plugin.p2status) {
+                    if (!plugin.p1status || !plugin.p2status) {
                         return;
                     }
                     Bukkit.getServer().broadcastMessage(plugin.prefix + "§e§lぽん！");
-                    switch (plugin.round) {
-                        case 6:
-                            Bukkit.getServer().broadcastMessage(plugin.prefix + "§f§l第" + plugin.round + "ラウンドは§e" + p1.getName() + "§fの勝利！");
-                            plugin.p1score += 2;
-                            plugin.round++;
-                            break;
-                        case 10:
-                            Bukkit.getServer().broadcastMessage(plugin.prefix + "§f§l第" + plugin.round + "ラウンドは§e" + p1.getName() + "§fの勝利！");
-                            plugin.p1score += 2;
-                            lastjudge();
-                            return;
-                        default:
-                            Bukkit.getServer().broadcastMessage(plugin.prefix + "§f§l第" + plugin.round + "ラウンドは§e" + p1.getName() + "§fの勝利！");
-                            plugin.p1score++;
-                            plugin.round++;
-                            break;
-                    }
-                    restart();
+                    new BukkitRunnable() {
+                        public void run() {
+                            Bukkit.getServer().broadcastMessage(plugin.prefix + "§3§l" + p1.getName() + "§r :" + fingertostring(plugin.p1putoutfinger));
+                            Bukkit.getServer().broadcastMessage(plugin.prefix + "§c§l" + p2.getName() + "§r :" + fingertostring(plugin.p2putoutfinger));
+                        }
+                    }.runTaskLater(plugin, 20);
+                    new BukkitRunnable(){
+                        public void run() {
+                            switch (plugin.round) {
+                                case 6:
+                                    Bukkit.getServer().broadcastMessage(plugin.prefix + "§f§l第" + plugin.round + "ラウンドは§e" + p1.getName() + "§fの勝利！");
+                                    plugin.p1score += 2;
+                                    plugin.round++;
+                                    break;
+                                case 10:
+                                    Bukkit.getServer().broadcastMessage(plugin.prefix + "§f§l第" + plugin.round + "ラウンドは§e" + p1.getName() + "§fの勝利！");
+                                    plugin.p1score += 2;
+                                    lastjudge();
+                                    return;
+                                default:
+                                    Bukkit.getServer().broadcastMessage(plugin.prefix + "§f§l第" + plugin.round + "ラウンドは§e" + p1.getName() + "§fの勝利！");
+                                    plugin.p1score++;
+                                    plugin.round++;
+                                    break;
+                            }
+                        }
+                }.runTaskLater(plugin,40);
+                    new BukkitRunnable() {
+                        public void run() {
+                            restart();
+                        }
+                    }.runTaskLater(plugin, 100);
                 }
             }.runTaskLater(plugin,40);
         }
         if(result == 2) {
-            Bukkit.getServer().broadcastMessage(plugin.prefix + "§f§lじゃんけん...§k");
+            Bukkit.getServer().broadcastMessage(plugin.prefix + "§f§lじゃんけん...§ka");
             new BukkitRunnable() {
                 public void run() {
-                    if(!plugin.p1status || !plugin.p2status) {
+                    if (!plugin.p1status || !plugin.p2status) {
                         return;
                     }
                     Bukkit.getServer().broadcastMessage(plugin.prefix + "§e§lぽん！");
-                    switch (plugin.round) {
-                        case 6:
-                            Bukkit.getServer().broadcastMessage(plugin.prefix + "§f§l第" + plugin.round + "ラウンドは§e" + p2.getName() + "§fの勝利！");
-                            plugin.p2score += 2;
-                            plugin.round++;
-                            break;
-                        case 10:
-                            Bukkit.getServer().broadcastMessage(plugin.prefix + "§f§l第" + plugin.round + "ラウンドは§e" + p2.getName() + "§fの勝利！");
-                            plugin.p2score += 2;
-                            lastjudge();
-                            return;
-                        default:
-                            Bukkit.getServer().broadcastMessage(plugin.prefix + "§f§l第" + plugin.round + "ラウンドは§e" + p2.getName() + "§fの勝利！");
-                            plugin.p2score++;
-                            plugin.round++;
-                            break;
-                    }
-                    restart();
+                    new BukkitRunnable() {
+                        public void run() {
+                            Bukkit.getServer().broadcastMessage(plugin.prefix + "§3§l"+p1.getName()+"§r :"+fingertostring(plugin.p1putoutfinger));
+                            Bukkit.getServer().broadcastMessage(plugin.prefix + "§c§l"+p2.getName()+"§r :"+fingertostring(plugin.p2putoutfinger));
+                        }
+                    }.runTaskLater(plugin,20);
+                    new BukkitRunnable() {
+                        public void run() {
+                            switch (plugin.round) {
+                                case 6:
+                                    Bukkit.getServer().broadcastMessage(plugin.prefix + "§f§l第" + plugin.round + "ラウンドは§e" + p2.getName() + "§fの勝利！");
+                                    plugin.p2score += 2;
+                                    plugin.round++;
+                                    break;
+                                case 10:
+                                    Bukkit.getServer().broadcastMessage(plugin.prefix + "§f§l第" + plugin.round + "ラウンドは§e" + p2.getName() + "§fの勝利！");
+                                    plugin.p2score += 2;
+                                    lastjudge();
+                                    return;
+                                default:
+                                    Bukkit.getServer().broadcastMessage(plugin.prefix + "§f§l第" + plugin.round + "ラウンドは§e" + p2.getName() + "§fの勝利！");
+                                    plugin.p2score++;
+                                    plugin.round++;
+                                    break;
+                            }
+                        }
+                }.runTaskLater(plugin,40);
+                    new BukkitRunnable() {
+                        public void run() {
+                            restart();
+                        }
+                    }.runTaskLater(plugin, 100);
                 }
             }.runTaskLater(plugin, 40);
         }
@@ -231,7 +270,7 @@ public class EighteenBattleManager {
         p1skullmeta.setLore(p1skulllore);
         p1skullmeta.setDisplayName("§l§3"+p1.getName());
         OfflinePlayer p1offline = Bukkit.getOfflinePlayer(p1.getUniqueId());
-        p1skullmeta.setOwningPlayer(p1offline);
+        p1skullmeta.setOwner(p1offline.getName());
         p1Skull.setItemMeta(p1skullmeta);
 
         ItemStack p2Skull = new ItemStack(Material.SKULL_ITEM, 1, (short) 3);
@@ -242,7 +281,7 @@ public class EighteenBattleManager {
         p2skullmeta.setLore(p2skulllore);
         p2skullmeta.setDisplayName("§l§c"+p2.getName());
         OfflinePlayer p2offline = Bukkit.getOfflinePlayer(p2.getUniqueId());
-        p2skullmeta.setOwningPlayer(p2offline);
+        p2skullmeta.setOwner(p2offline.getName());
         p2Skull.setItemMeta(p2skullmeta);
 
         ItemStack roundwatch = new ItemStack(Material.WATCH,1);
@@ -262,6 +301,32 @@ public class EighteenBattleManager {
         p2.openInventory(plugin.p2inv);
         p1.updateInventory();
         p2.updateInventory();
+        new BukkitRunnable() {
+            public void run() {
+                if(!plugin.p1canchooserps && !plugin.p2canchooserps) {
+                    return;
+                }
+                if(plugin.p1canchooserps && !plugin.p2canchooserps) {
+                    Bukkit.getServer().broadcastMessage(plugin.prefix + "§l"+p1.getName()+"が一定時間以上放置したため、"+p2.getName()+"さんの勝利となりました");
+                    vault.deposit(p2.getUniqueId(), plugin.betmoney * 2 - plugin.betmoney * plugin.bonuscompetitive);
+                    mysql.senddepositinfo(p2,plugin.betmoney * 2 - plugin.betmoney * plugin.bonuscompetitive);
+                    plugin.specialbonus += plugin.betmoney * plugin.bonuscompetitive;
+                    config.reload();
+                    return;
+                }
+                if(!plugin.p1canchooserps) {
+                    Bukkit.getServer().broadcastMessage(plugin.prefix + "§l"+p2.getName()+"が一定時間以上放置したため、"+p1.getName()+"さんの勝利となりました");
+                    vault.deposit(p1.getUniqueId(), plugin.betmoney * 2 - plugin.betmoney * plugin.bonuscompetitive);
+                    mysql.senddepositinfo(p1,plugin.betmoney * 2 - plugin.betmoney * plugin.bonuscompetitive);
+                    plugin.specialbonus += plugin.betmoney * plugin.bonuscompetitive;
+                    config.reload();
+                    return;
+                }
+                Bukkit.getServer().broadcastMessage(plugin.prefix + "§c§l"+p1.getName()+"と"+p2.getName()+"がどちらも一定時間以上放置したため、試合は中止となり賭け金はすべてストックへ追加されます");
+                plugin.specialbonus += plugin.betmoney * 2;
+                config.reload();
+            }
+        }.runTaskLater(plugin, 2400);
     }
     void lastjudge() {
         plugin.p1score -= plugin.p1finger;
@@ -285,7 +350,8 @@ public class EighteenBattleManager {
                     return;
                 }
                 if(plugin.p1score > plugin.p2score) {
-                    Bukkit.getServer().broadcastMessage(plugin.prefix + "§e§l"+p1.getName()+"§fの勝利です！試合を終了します");
+                    Bukkit.getServer().broadcastMessage(plugin.prefix + "§e§l"+p1.getName()+"§fの勝ち！");
+                    Bukkit.getServer().broadcastMessage(plugin.prefix + "§l試合を終了します");
                     if(plugin.fevertime) {
                         if(plugin.votep1.isEmpty()) {
                             Bukkit.getServer().broadcastMessage(plugin.prefix + "§e§l"+p1.getName()+"が勝利しましたが、だれも予想していなかったためストックは勝者にすべて支払われます！");
@@ -300,7 +366,7 @@ public class EighteenBattleManager {
                         }
                         Random r = new Random();
                         Player bonusplayer = Bukkit.getServer().getPlayer(plugin.votep1.get(r.nextInt(plugin.votep1.size())));
-                        Bukkit.getServer().broadcastMessage(plugin.prefix + "§l勝者の§e§l"+p1.getName()+"§fと抽選で選ばれた§e"+bonusplayer.getName()+"§fは追加ボーナスを受け取った！");
+                        Bukkit.getServer().broadcastMessage(plugin.prefix + "§l勝者の§e§l"+p1.getName()+"§fと抽選で選ばれた§e"+bonusplayer.getName()+"§fは追加ボーナスとして"+plugin.specialbonus/2+"円ずつ受け取った！");
                         vault.deposit(p1.getUniqueId(), plugin.betmoney * 2);
                         mysql.senddepositinfo(p1,plugin.betmoney * 2);
                         vault.deposit(p1.getUniqueId(),plugin.specialbonus / 2);
@@ -318,7 +384,8 @@ public class EighteenBattleManager {
                     mysql.senddepositinfo(p1,plugin.betmoney * 2 - plugin.betmoney * plugin.bonuscompetitive);
                     plugin.reset();
                 } else {
-                    Bukkit.getServer().broadcastMessage(plugin.prefix + "§e§l"+p2.getName()+"§fの勝利です！試合を終了します");
+                    Bukkit.getServer().broadcastMessage(plugin.prefix + "§e§l"+p2.getName()+"§fの勝ち！");
+                    Bukkit.getServer().broadcastMessage(plugin.prefix + "§l試合を終了します");
                     if(plugin.fevertime) {
                         if(plugin.votep2.isEmpty()) {
                             Bukkit.getServer().broadcastMessage(plugin.prefix + "§e§l"+p2.getName()+"が勝利しましたが、だれも予想していなかったためストックはすべて勝者に支払われます！");
@@ -333,7 +400,7 @@ public class EighteenBattleManager {
                         }
                         Random r = new Random();
                         Player bonusplayer = Bukkit.getServer().getPlayer(plugin.votep2.get(r.nextInt(plugin.votep2.size())));
-                        Bukkit.getServer().broadcastMessage(plugin.prefix + "§l勝者の§e§l"+p2.getName()+"§fと抽選で選ばれた§e§l"+bonusplayer.getName()+"§fは追加ボーナスを受け取った！");
+                        Bukkit.getServer().broadcastMessage(plugin.prefix + "§l勝者の§e§l"+p2.getName()+"§fと抽選で選ばれた§e§l"+bonusplayer.getName()+"§fは追加ボーナスとして"+plugin.specialbonus/2+"円ずつ受け取った！");
                         vault.deposit(p2.getUniqueId(), plugin.betmoney * 2);
                         mysql.senddepositinfo(p2,plugin.betmoney * 2);
                         vault.deposit(p2.getUniqueId(),plugin.specialbonus / 2);
@@ -382,6 +449,18 @@ public class EighteenBattleManager {
             return 2;
         }
         return -1;
+    }
+    String fingertostring(int putoutfinger) {
+        if(putoutfinger == 0) {
+            return "グー";
+        }
+        if(putoutfinger == 2) {
+            return "チョキ";
+        }
+        if(putoutfinger == 5) {
+            return "パー";
+        }
+        return "？";
     }
 
 }

@@ -26,7 +26,7 @@ public class EighteenVoteManager {
         List<String> p1buttomlore = new ArrayList<>();
         p1buttomlore.add("§e§lこのプレイヤーが勝利すると予想！");
         OfflinePlayer p1offline = Bukkit.getOfflinePlayer(plugin.onGame.get(0));
-        p1buttommeta.setOwningPlayer(p1offline);
+        p1buttommeta.setOwner(p1offline.getName());
         p1buttommeta.setLore(p1buttomlore);
         p1buttom.setItemMeta(p1buttommeta);
 
@@ -36,7 +36,7 @@ public class EighteenVoteManager {
         List<String> p2buttomlore = new ArrayList<>();
         p2buttomlore.add("§e§lこのプレイヤーが勝利すると予想！");
         OfflinePlayer p2offline = Bukkit.getOfflinePlayer(plugin.onGame.get(1));
-        p2buttommeta.setOwningPlayer(p2offline);
+        p2buttommeta.setOwner(p2offline.getName());
         p2buttommeta.setLore(p2buttomlore);
         p2buttom.setItemMeta(p2buttommeta);
         voteinv.setItem(2,p1buttom);

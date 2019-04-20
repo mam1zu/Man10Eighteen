@@ -324,15 +324,15 @@ public class EighteenCommandManager implements CommandExecutor {
                 p.sendMessage("p1putoutfinger :"+plugin.p1putoutfinger);
                 p.sendMessage("p2putoutfinger :"+plugin.p2putoutfinger);
                 p.sendMessage("prewait :"+plugin.prewait);
-                if(plugin.onGame.get(0) == null) {
+                if(plugin.onGame.isEmpty()) {
                     p.sendMessage("p1uuid :null");
+                    p.sendMessage("p2uuid :null");
+                } else if(plugin.prewait){
+                    p.sendMessage("p1uuid :"+plugin.onGame.get(0));
+                    p.sendMessage("p2uuid :null");
                 } else {
                     p.sendMessage("p1uuid :"+plugin.onGame.get(0));
-                }
-                if(plugin.onGame.get(1) == null) {
-                    p.sendMessage("p1uuid :null");
-                } else {
-                    p.sendMessage("p2uuid :"+plugin.onGame.get(1));
+                    p.sendMessage("p1uuid :"+plugin.onGame.get(1));
                 }
                 return true;
             }
@@ -554,6 +554,7 @@ public class EighteenCommandManager implements CommandExecutor {
             p.sendMessage("§c§l/mer on  §f: プラグインを起動します");
             p.sendMessage("§c§l/mer off §f: プラグインを停止します");
             p.sendMessage("§c§l/mer stop §f: 試合をストップします");
+            p.sendMessage("§c§l/mer debug: デバッグ情報を表示します");
             p.sendMessage("§l==========§cOP以上§r§l==========");
             p.sendMessage("§c§l/mer changeconfig §f:configの値を変更します");
             return;
@@ -569,6 +570,7 @@ public class EighteenCommandManager implements CommandExecutor {
             p.sendMessage("§c§l/mer on  §f: プラグインを起動します");
             p.sendMessage("§c§l/mer off §f: プラグインを停止します");
             p.sendMessage("§c§l/mer stop §f: 試合をストップします");
+            p.sendMessage("§c§l/mer debug: デバッグ情報を表示します");
             return;
         }
         p.sendMessage("----------"+plugin.prefix+"----------");
