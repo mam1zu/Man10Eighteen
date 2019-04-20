@@ -376,7 +376,6 @@ public class EighteenCommandManager implements CommandExecutor {
                     p.sendMessage(plugin.prefix + "§c§l賭け金は返金されます");
                     vault.deposit(plugin.onGame.get(0), plugin.betmoney);
                     mysql.senddepositinfo(Bukkit.getPlayer(plugin.onGame.get(0)),plugin.betmoney);
-                    plugin.onGame.clear();
                     plugin.reset();
                     return true;
                 }
@@ -419,9 +418,69 @@ public class EighteenCommandManager implements CommandExecutor {
             vault.withdraw(p.getUniqueId(), plugin.betmoney);
             mysql.sendwithdrawinfo(p,plugin.betmoney);
             getServer().broadcastMessage(plugin.prefix + "§e§l"+p.getName()+"§fさんが§e"+moneyformat(plugin.betmoney)+"§fで試合を開きました！ §a/mer join§fで参加！");
+            TextComponent clicktogame = new TextComponent();
+            clicktogame.setColor(ChatColor.MAGIC);
+            clicktogame.setBold(true);
+            clicktogame.addExtra("a");
+            clicktogame.addExtra("ここをクリックでも参加できます！");
+            clicktogame.addExtra("a");
+            clicktogame.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/mer join"));
+            Bukkit.spigot().broadcast(clicktogame);
+            getServer().broadcastMessage(plugin.prefix + "§a試合受付終了まで残り60秒");
             plugin.p1status = true;
             plugin.prewait = true;
             plugin.onGame.add(p.getUniqueId());
+            new BukkitRunnable() {
+                public void run() {
+                    if(!plugin.prewait) {
+                        return;
+                    }
+                    getServer().broadcastMessage(plugin.prefix + "§a試合受付終了まで残り30秒");
+                }
+            }.runTaskLater(plugin, 600);
+            new BukkitRunnable() {
+                public void run() {
+                    if(!plugin.prewait) {
+                        return;
+                    }
+                    getServer().broadcastMessage(plugin.prefix + "§a試合受付終了まで残り10秒");
+                }
+            }.runTaskLater(plugin,1000);
+            new BukkitRunnable() {
+                public void run() {
+                    if(!plugin.prewait) {
+                        return;
+                    }
+                    getServer().broadcastMessage(plugin.prefix + "§a試合終了まで残り3秒");
+                }
+            }.runTaskLater(plugin,1140);
+            new BukkitRunnable() {
+                public void run() {
+                    if(!plugin.prewait) {
+                        return;
+                    }
+                    getServer().broadcastMessage(plugin.prefix + "§a試合終了まで残り2秒");
+                }
+            }.runTaskLater(plugin,1160);
+            new BukkitRunnable() {
+                public void run() {
+                    if(!plugin.prewait) {
+                        return;
+                    }
+                    getServer().broadcastMessage(plugin.prefix + "§a試合終了まで残り1秒");
+                }
+            }.runTaskLater(plugin,1180);
+            new BukkitRunnable() {
+                public void run() {
+                    if(!plugin.prewait) {
+                        return;
+                    }
+                    getServer().broadcastMessage(plugin.prefix + "§c§l参加者が集まらなかったため中止しました");
+                    vault.deposit(plugin.onGame.get(0), plugin.betmoney);
+                    mysql.senddepositinfo(Bukkit.getPlayer(plugin.onGame.get(0)),plugin.betmoney);
+                    plugin.reset();
+                }
+            }.runTaskLater(plugin,1200);
         }
         if(args.length == 3 && args[0].equalsIgnoreCase("changeconfig")) {
             if (!p.hasPermission("mer.op")) {
