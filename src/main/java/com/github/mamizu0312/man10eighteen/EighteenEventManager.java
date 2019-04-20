@@ -103,9 +103,6 @@ public class EighteenEventManager implements Listener {
             return;
         }
         if(plugin.onGame.contains(p.getUniqueId())) {
-            if(plugin.prewait) {
-                return;
-            }
             e.setCancelled(true);
             if(plugin.onGame.get(0) == p.getUniqueId()) {
                 if(plugin.p1canchooserps){

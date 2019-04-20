@@ -109,8 +109,10 @@ public class EighteenBattleManager {
     void emergencystop() {
         p1.closeInventory();
         p2.closeInventory();
-        vault.deposit(p1.getUniqueId(), plugin.betmoney);
-        vault.deposit(p2.getUniqueId(), plugin.betmoney);
+        vault.deposit(plugin.onGame.get(0), plugin.betmoney);
+        mysql.senddepositinfo(Bukkit.getPlayer(plugin.onGame.get(0)),plugin.betmoney);
+        vault.deposit(plugin.onGame.get(1), plugin.betmoney);
+        mysql.senddepositinfo(Bukkit.getPlayer(plugin.onGame.get(1)), plugin.betmoney);
         p1.sendMessage(plugin.prefix + "§c§l賭け金は返金されます");
         p2.sendMessage(plugin.prefix + "§c§l賭け金は返金されます");
         Bukkit.getServer().broadcastMessage(plugin.prefix + "§c§l試合がキャンセルされました。");

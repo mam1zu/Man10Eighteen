@@ -286,7 +286,6 @@ public class EighteenCommandManager implements CommandExecutor {
                             battle.game();
                             plugin.p1canchooserps = true;
                             plugin.p2canchooserps = true;
-                            plugin.prewait = false;
                             plugin.p2status = true;
                         }
                     }.runTaskLater(plugin, 1200);
@@ -297,6 +296,8 @@ public class EighteenCommandManager implements CommandExecutor {
                 getServer().broadcastMessage(plugin.prefix + "§e§l" + p.getName() + "§fさんが参加しました！ゲームを開始します...");
                 battle = new EighteenBattleManager(plugin, Bukkit.getPlayer(plugin.onGame.get(0)), p);
                 plugin.event.battle =  battle;
+                plugin.onGame.add(p.getUniqueId());
+                plugin.prewait = false;
                 battle.game();
                 plugin.p1canchooserps = true;
                 plugin.p2canchooserps = true;
@@ -410,7 +411,7 @@ public class EighteenCommandManager implements CommandExecutor {
                 p.sendMessage(plugin.prefix + "§c§l賭け金が少なすぎるまたは多すぎます");
                 return true;
             }
-            if(vault.getBalance(p.getUniqueId()) <= plugin.betmoney) {
+            if(vault.getBalance(p.getUniqueId()) < plugin.betmoney) {
                 plugin.betmoney = 0;
                 p.sendMessage(plugin.prefix + "§c§l所持金が足りません");
                 return true;

@@ -97,6 +97,9 @@ public final class Man10Eighteen extends JavaPlugin {
         p1status = false;
         p2status = false;
         votetime = false;
+        onVoting.clear();
+        votep1.clear();
+        votep2.clear();
     }
 
     public static String getJpBal(double balance){
