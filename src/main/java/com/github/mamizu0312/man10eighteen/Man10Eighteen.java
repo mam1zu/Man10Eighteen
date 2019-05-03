@@ -1,6 +1,10 @@
 package com.github.mamizu0312.man10eighteen;
 
 import com.github.mamizu0312.man10eighteen.betselecter.MoneySelectInventoryAPI;
+import com.github.mamizu0312.man10eighteen.delay.EighteenDelay01;
+import com.github.mamizu0312.man10eighteen.delay.EighteenDelay02;
+import com.github.mamizu0312.man10eighteen.delay.EighteenDelay03;
+import com.github.mamizu0312.man10eighteen.delay.EighteenDelay04;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
@@ -29,25 +33,25 @@ public final class Man10Eighteen extends JavaPlugin {
     boolean prewait = false;
     public boolean p1canchooserps = false;
     public boolean p2canchooserps = false;
-    String prefix;
-    VaultManager vault;
+    public String prefix;
+    public VaultManager vault;
     public EighteenEventManager event;
     public EighteenBattleManager battle;
     EighteenConfigManager config;
     EighteenVoteManager vote;
-    int round = 1;
-    int p1score = 0;
-    int p2score = 0;
-    int p1finger = 18;
-    int p2finger = 18;
+    public int round = 1;
+    public int p1score = 0;
+    public int p2score = 0;
+    public int p1finger = 18;
+    public int p2finger = 18;
     //最小掛け金、最大掛け金はconfigで設定
-    double minimumbet;
-    double maximumbet;
-    double betmoney = 0;
-    boolean fevertime = false;
-    double specialbonus;
-    double bonuscompetitive = 0.05;
-    int chance;
+    public double minimumbet;
+    public double maximumbet;
+    public double betmoney = 0;
+    public boolean fevertime = false;
+    public double specialbonus;
+    public double bonuscompetitive = 0.05;
+    public int chance;
     String HOST;
     String USER;
     String PASS;
@@ -58,10 +62,16 @@ public final class Man10Eighteen extends JavaPlugin {
     boolean p2status;
     //votetimeはtrueで投票受付中、falseで投票受付停止中
     boolean votetime;
-
-
+    EighteenDelay01 delay01 ;//delay01: 一定期間操作がなかった場合の処理
+    EighteenDelay02 delay02; //delay02: じゃんけんの処理(勝者p1の場合)
+    EighteenDelay03 delay03; //delay03] じゃんけんの処理(勝者p2の場所)
+    EighteenDelay04 delay04; //delay04: 勝敗の処理
     //MoneySelectInventoryAPI
     MoneySelectInventoryAPI msi;
+    public boolean delay01status;
+    public boolean delay02status;
+    public boolean delay03status;
+    public boolean delay04status;
 
     @Override
     public void onEnable() {
@@ -74,6 +84,10 @@ public final class Man10Eighteen extends JavaPlugin {
         vault = new VaultManager(this);
         vote = new EighteenVoteManager(this);
         msi = new MoneySelectInventoryAPI(this,"Man10Eighteen");
+        delay01 = new EighteenDelay01(this);
+        delay02 = new EighteenDelay02(this);
+        delay03 = new EighteenDelay03(this);
+        delay04 = new EighteenDelay04(this);
     }
 
     @Override
@@ -100,22 +114,45 @@ public final class Man10Eighteen extends JavaPlugin {
         onVoting.clear();
         votep1.clear();
         votep2.clear();
+        p1canchooserps = false;
+        p2canchooserps = false;
+        delay01 = new EighteenDelay01(this);
+        delay02 = new EighteenDelay02(this);
+        delay03 = new EighteenDelay03(this);
+        delay04 = new EighteenDelay04(this);
+        delay01status = false;
+        delay02status = false;
+        delay03status = false;
+        delay04status = false;
+    }
+    public void cancelAllTasks() {
+        if(delay01status) {
+            delay01.cancel();
+        }
+        if(delay02status) {
+            delay02.cancel();
+        }
+        if(delay03status) {
+            delay03.cancel();
+        }
+        if(delay04status) {
+            delay04.cancel();
+        }
     }
 
-    public static String getJpBal(double balance){
-        long val = (long)balance;
+    public static String getJpBal(double balance) {
+        long val = (long) balance;
         String addition = "";
         String form = "万";
-        long man = val/10000;
-        if(val >= 100000000){
-            man = val/100000000;
+        long man = val / 10000;
+        if (val >= 100000000) {
+            man = val / 100000000;
             form = "億";
             long mann = (val - man * 100000000) / 10000;
             addition = mann + "万";
         }
         return man + form + addition;
     }
-
     ////////////////////////////////////////////////////////////////////////////////////////////
     //  マインクラフトチャットに、ホバーテキストや、クリックコマンドを設定する関数
     // [例1] sendHoverText(player,"ここをクリック",null,"/say おはまん");

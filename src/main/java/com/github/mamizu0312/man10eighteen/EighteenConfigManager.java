@@ -1,8 +1,5 @@
 package com.github.mamizu0312.man10eighteen;
 
-
-import java.util.HashMap;
-
 public class EighteenConfigManager {
     Man10Eighteen plugin;
     public EighteenConfigManager(Man10Eighteen plugin) {
