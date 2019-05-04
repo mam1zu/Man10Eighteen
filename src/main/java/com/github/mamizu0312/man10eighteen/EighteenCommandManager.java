@@ -299,6 +299,12 @@ public class EighteenCommandManager implements CommandExecutor {
                 p.sendMessage("prewait :"+plugin.prewait);
                 p.sendMessage("p1canchooserps :"+plugin.p1canchooserps);
                 p.sendMessage("p2canchooserps :"+plugin.p2canchooserps);
+                p.sendMessage("delay01status: "+plugin.delay01status);
+                p.sendMessage("delay02status: "+plugin.delay02status);
+                p.sendMessage("delay03status: "+plugin.delay03status);
+                p.sendMessage("delay04status: "+plugin.delay04status);
+                p.sendMessage("p1status: "+plugin.p1status);
+                p.sendMessage("p2status: "+plugin.p2status);
                 if(plugin.onGame.isEmpty()) {
                     p.sendMessage("p1uuid :null");
                     p.sendMessage("p2uuid :null");
@@ -444,6 +450,7 @@ public class EighteenCommandManager implements CommandExecutor {
                     battletime--;
                 }
             }.runTaskTimerAsynchronously(plugin,0,20);
+            return true;
         }
         if(args.length == 3 && args[0].equalsIgnoreCase("changeconfig")) {
             if (!p.hasPermission("mer.op")) {
@@ -498,7 +505,9 @@ public class EighteenCommandManager implements CommandExecutor {
                 plugin.reloadConfig();
                 return true;
             }
+            return true;
         }
+        p.sendMessage("/mer");
         return true;
     }
     void confighelp(Player p) {
@@ -520,7 +529,7 @@ public class EighteenCommandManager implements CommandExecutor {
             p.sendMessage("§c§l/mer on  §f: プラグインを起動します");
             p.sendMessage("§c§l/mer off §f: プラグインを停止します");
             p.sendMessage("§c§l/mer stop §f: 試合をストップします");
-            p.sendMessage("§c§l/mer debug: デバッグ情報を表示します");
+            p.sendMessage("§c§l/mer debug §f: デバッグ情報を表示します");
             p.sendMessage("§l==========§cOP以上§r§l==========");
             p.sendMessage("§c§l/mer changeconfig §f:configの値を変更します");
             return;
@@ -536,7 +545,7 @@ public class EighteenCommandManager implements CommandExecutor {
             p.sendMessage("§c§l/mer on  §f: プラグインを起動します");
             p.sendMessage("§c§l/mer off §f: プラグインを停止します");
             p.sendMessage("§c§l/mer stop §f: 試合をストップします");
-            p.sendMessage("§c§l/mer debug: デバッグ情報を表示します");
+            p.sendMessage("§c§l/mer debug §f: デバッグ情報を表示します");
             return;
         }
         p.sendMessage("----------"+plugin.prefix+"----------");
