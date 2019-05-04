@@ -305,6 +305,7 @@ public class EighteenCommandManager implements CommandExecutor {
                 p.sendMessage("delay04status: "+plugin.delay04status);
                 p.sendMessage("p1status: "+plugin.p1status);
                 p.sendMessage("p2status: "+plugin.p2status);
+                p.sendMessage("version: 1.2.10");
                 if(plugin.onGame.isEmpty()) {
                     p.sendMessage("p1uuid :null");
                     p.sendMessage("p2uuid :null");
